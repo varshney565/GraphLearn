@@ -374,28 +374,6 @@ h4 {
   padding-left: 1.1rem;
 }
 
-.source-guide {
-  display: grid;
-  gap: 14px;
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-}
-
-.source-guide-head {
-  display: grid;
-  gap: 4px;
-}
-
-.source-guide-head h4 {
-  color: var(--teal);
-}
-
-.source-guide-head p {
-  color: #55625b;
-  font-size: 0.94rem;
-}
-
 .coverage-box {
   display: grid;
   gap: 10px;
@@ -425,26 +403,35 @@ h4 {
   font-weight: 800;
 }
 
-.recipe-list {
+.pseudo-guide {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.pseudo-list {
   display: grid;
   gap: 12px;
 }
 
-.recipe-card {
+.pseudo-card {
   display: grid;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--line);
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #d5c9b7;
   border-radius: var(--radius);
-  background: #f8fbf7;
+  background: #1f2522;
 }
 
-.recipe-card header {
+.pseudo-card header {
   display: grid;
   gap: 6px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #3a443f;
+  background: #26302c;
 }
 
-.recipe-card header span {
+.pseudo-card header span {
   width: fit-content;
   padding: 5px 8px;
   border-radius: 999px;
@@ -454,28 +441,21 @@ h4 {
   font-weight: 900;
 }
 
-.recipe-card h5 {
+.pseudo-card h4 {
+  color: #f7efe4;
   font-size: 1rem;
 }
 
-.recipe-steps {
-  display: grid;
-  gap: 8px;
+.pseudo-card pre {
   margin: 0;
-  padding-left: 1.25rem;
+  padding: 14px;
+  overflow-x: auto;
 }
 
-.recipe-steps li {
-  color: #263029;
-  line-height: 1.55;
-}
-
-.recipe-remember {
-  padding: 10px;
-  border-left: 3px solid var(--gold);
-  background: #fff8e8;
-  color: #4f4530;
-  font-size: 0.92rem;
+.pseudo-card code {
+  color: #f8f1e7;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .code-card {

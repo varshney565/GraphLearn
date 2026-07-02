@@ -1158,6 +1158,808 @@ const lessonSourceGuides = {
   }
 };
 
+const lessonPseudoGuides = {
+  "graph-basics": {
+    coverage: [
+      "Lecture1.cpp: addEdge",
+      "Lecture1.cpp: display",
+      "Lecture1.cpp: removeEdge",
+      "Lecture1.cpp: removeVtx"
+    ],
+    blocks: [
+      {
+        title: "addEdge for undirected weighted graph",
+        source: "Lecture1.cpp:addEdge",
+        code: `function addEdge(adj, u, v, w):
+    adj[u].push({v, w})
+    adj[v].push({u, w})`
+      },
+      {
+        title: "display graph",
+        source: "Lecture1.cpp:display",
+        code: `function display(adj):
+    for u from 0 to V - 1:
+        print u
+        for each edge in adj[u]:
+            print edge.neighbour, edge.weight`
+      },
+      {
+        title: "removeEdge for undirected graph",
+        source: "Lecture1.cpp:removeEdge",
+        code: `function removeEdge(adj, u, v):
+    find v inside adj[u]
+    erase v from adj[u]
+
+    find u inside adj[v]
+    erase u from adj[v]`
+      },
+      {
+        title: "remove vertex",
+        source: "Lecture1.cpp:removeVtx",
+        code: `function removeVtx(adj, u):
+    while adj[u] is not empty:
+        edge = last edge of adj[u]
+        remove edge u-edge.neighbour
+        remove reverse edge edge.neighbour-u`
+      }
+    ]
+  },
+  "dfs-backtracking": {
+    coverage: [
+      "Lecture1.cpp: hasPathHelper",
+      "Lecture1.cpp: TotalPaths",
+      "Lecture1.cpp: preorder",
+      "Lecture1.cpp: HeavyPath",
+      "Lecture1.cpp: HamiltonPaths",
+      "Lecture2.cpp: GetConnectedComponents"
+    ],
+    blocks: [
+      {
+        title: "hasPath DFS",
+        source: "Lecture1.cpp:hasPathHelper",
+        code: `function hasPath(src, dest):
+    if src == dest:
+        return true
+
+    visited[src] = true
+
+    for each edge in adj[src]:
+        nbr = edge.neighbour
+        if visited[nbr] == false:
+            if hasPath(nbr, dest) == true:
+                return true
+
+    return false`
+      },
+      {
+        title: "count all paths DFS",
+        source: "Lecture1.cpp:TotalPaths",
+        code: `function countPaths(src, dest):
+    if src == dest:
+        ans = ans + 1
+        return
+
+    visited[src] = true
+
+    for each edge in adj[src]:
+        nbr = edge.neighbour
+        if visited[nbr] == false:
+            countPaths(nbr, dest)
+
+    visited[src] = false`
+      },
+      {
+        title: "preorder DFS",
+        source: "Lecture1.cpp:preorder",
+        code: `function preorder(src, path, cost):
+    visited[src] = true
+    path = path + src
+    print src, path, cost
+
+    for each edge in adj[src]:
+        nbr = edge.neighbour
+        wt = edge.weight
+        if visited[nbr] == false:
+            preorder(nbr, path, cost + wt)
+
+    visited[src] = false`
+      },
+      {
+        title: "heaviest path",
+        source: "Lecture1.cpp:HeavyPath",
+        code: `function heaviestPath(src, dest, path, weight):
+    if src == dest:
+        if weight > bestWeight:
+            bestWeight = weight
+            bestPath = path
+        return
+
+    visited[src] = true
+
+    for each edge in adj[src]:
+        nbr = edge.neighbour
+        wt = edge.weight
+        if visited[nbr] == false:
+            heaviestPath(nbr, dest, path + nbr, weight + wt)
+
+    visited[src] = false`
+      },
+      {
+        title: "connected components",
+        source: "Lecture2.cpp:GetConnectedComponents",
+        code: `function countComponents():
+    visited = false for all vertices
+    components = 0
+
+    for i from 0 to n - 1:
+        if visited[i] == false:
+            dfs(i)
+            components = components + 1
+
+    return components`
+      }
+    ]
+  },
+  "grid-graphs": {
+    coverage: [
+      "Lecture2.cpp: numIslands",
+      "Lecture2.cpp: maxAreaOfIsland",
+      "Lecture2.cpp: islandPerimeter",
+      "Lecture2.cpp: Surrounded Regions",
+      "Lecture3.cpp: numberofDistinctIslands",
+      "Lecture6.cpp: countSubIslands"
+    ],
+    blocks: [
+      {
+        title: "number of islands",
+        source: "Lecture2.cpp:numIslands",
+        code: `function numIslands(grid):
+    count = 0
+
+    for every cell (i, j):
+        if grid[i][j] == '1':
+            dfs(i, j)
+            count = count + 1
+
+    return count
+
+function dfs(x, y):
+    grid[x][y] = '0'
+
+    for each direction:
+        nx = x + direction.x
+        ny = y + direction.y
+        if inside(nx, ny) and grid[nx][ny] == '1':
+            dfs(nx, ny)`
+      },
+      {
+        title: "max area of island",
+        source: "Lecture2.cpp:maxAreaOfIsland",
+        code: `function maxArea(grid):
+    ans = 0
+
+    for every cell (i, j):
+        if grid[i][j] == 1:
+            temp = 0
+            dfs(i, j)
+            ans = max(ans, temp)
+
+    return ans
+
+function dfs(x, y):
+    grid[x][y] = 0
+    temp = temp + 1
+    call dfs on all valid land neighbours`
+      },
+      {
+        title: "island perimeter",
+        source: "Lecture2.cpp:islandPerimeter",
+        code: `function islandPerimeter(grid):
+    ans = 0
+
+    for every cell (i, j):
+        if grid[i][j] == 1:
+            if up is outside or water: ans++
+            if down is outside or water: ans++
+            if left is outside or water: ans++
+            if right is outside or water: ans++
+
+    return ans`
+      },
+      {
+        title: "surrounded regions",
+        source: "Lecture2.cpp:solve",
+        code: `function solve(board):
+    for every boundary cell:
+        if board[cell] == 'O':
+            dfs(cell)
+
+    for every cell:
+        if board[cell] == 'O':
+            board[cell] = 'X'
+        else if board[cell] == 'T':
+            board[cell] = 'O'
+
+function dfs(x, y):
+    board[x][y] = 'T'
+    call dfs on all valid neighbour cells containing 'O'`
+      },
+      {
+        title: "distinct islands",
+        source: "Lecture3.cpp:numberofDistinctIslands",
+        code: `function distinctIslands(grid):
+    set = empty
+
+    for every land cell:
+        call = ""
+        dfs(cell, call)
+        insert call into set
+
+    return set.size
+
+function dfs(x, y, call):
+    grid[x][y] = 0
+    for direction index i:
+        if neighbour is land:
+            call += i
+            dfs(neighbour, call)
+    call += "b"`
+      }
+    ]
+  },
+  "bfs-levels": {
+    coverage: [
+      "Lecture3.cpp: BFS_without_cycle",
+      "Lecture3.cpp: orangesRotting",
+      "Lecture3.cpp: shortestPathBinaryMatrix",
+      "Lecture3.cpp: updateMatrix",
+      "Lecture8.cpp: numBusesToDestination"
+    ],
+    blocks: [
+      {
+        title: "BFS without cycle detection",
+        source: "Lecture3.cpp:BFS_without_cycle",
+        code: `function BFS(src):
+    queue.push(src)
+    visited[src] = true
+    level = 0
+
+    while queue is not empty:
+        size = queue.size
+
+        repeat size times:
+            front = queue.pop()
+            print front at current level
+
+            for each nbr of front:
+                if visited[nbr] == false:
+                    visited[nbr] = true
+                    queue.push(nbr)
+
+        level = level + 1`
+      },
+      {
+        title: "rotting oranges",
+        source: "Lecture3.cpp:orangesRotting",
+        code: `function orangesRotting(grid):
+    push all rotten oranges into queue
+    time = -1
+
+    while queue is not empty:
+        size = queue.size
+        time = time + 1
+
+        repeat size times:
+            orange = queue.pop()
+            for each 4-direction neighbour:
+                if neighbour is fresh:
+                    neighbour = rotten
+                    queue.push(neighbour)
+
+    if any fresh orange remains:
+        return -1
+    return time`
+      },
+      {
+        title: "shortest path in binary matrix",
+        source: "Lecture3.cpp:shortestPathBinaryMatrix",
+        code: `function shortestPathBinaryMatrix(grid):
+    if start blocked or end blocked:
+        return -1
+
+    queue.push(start)
+    level = 1
+
+    while queue is not empty:
+        size = queue.size
+
+        repeat size times:
+            cell = queue.pop()
+            if cell is destination:
+                return level
+            mark cell blocked
+            push all valid 8-direction zero neighbours
+
+        level = level + 1
+
+    return -1`
+      },
+      {
+        title: "01 matrix",
+        source: "Lecture3.cpp:updateMatrix",
+        code: `function updateMatrix(mat):
+    push all zero cells into queue
+    level = 0
+
+    while queue is not empty:
+        size = queue.size
+
+        repeat size times:
+            cell = queue.pop()
+            for each 4-direction neighbour:
+                if neighbour value is 1:
+                    neighbour value = 0
+                    ans[neighbour] = level + 1
+                    queue.push(neighbour)
+
+        level = level + 1`
+      }
+    ]
+  },
+  "adjacency-operations": {
+    coverage: [
+      "Lecture3.cpp: BFS",
+      "Lecture3.cpp: isBipartite",
+      "Lecture4.cpp: KahnsAlgo",
+      "Lecture5.cpp: isCycle",
+      "Lecture5.cpp: findRedundantConnection"
+    ],
+    blocks: [
+      {
+        title: "cycle detection using BFS pop",
+        source: "Lecture3.cpp:BFS",
+        code: `function BFS_cycle(src):
+    queue.push(src)
+
+    while queue is not empty:
+        front = queue.pop()
+
+        if visited[front] == true:
+            cycle found
+            continue
+
+        visited[front] = true
+
+        for each nbr of front:
+            if visited[nbr] == false:
+                queue.push(nbr)`
+      },
+      {
+        title: "directed cycle detection",
+        source: "Lecture5.cpp:isCycle",
+        code: `state values:
+    0 = unvisited
+    1 = current recursion path
+    2 = processed
+
+function dfs(u):
+    state[u] = 1
+
+    for each v in graph[u]:
+        if state[v] == 0:
+            dfs(v)
+        else if state[v] == 1:
+            cycle found
+
+    state[u] = 2`
+      },
+      {
+        title: "cycle detection using DSU",
+        source: "Lecture5.cpp:findRedundantConnection",
+        code: `function redundantConnection(edges):
+    initialize DSU
+
+    for each edge (u, v):
+        if union(u, v) == false:
+            return edge`
+      },
+      {
+        title: "cycle detection using Kahn",
+        source: "Lecture4.cpp:KahnsAlgo",
+        code: `function hasCycleDirected(graph):
+    calculate indegree
+    push all nodes with indegree 0
+    processed = 0
+
+    while queue is not empty:
+        u = queue.pop()
+        processed++
+
+        for each v in graph[u]:
+            indegree[v]--
+            if indegree[v] == 0:
+                queue.push(v)
+
+    return processed < n`
+      },
+      {
+        title: "bipartite odd cycle check",
+        source: "Lecture3.cpp:isBipartite",
+        code: `function isBipartite(graph):
+    color = 0 for all nodes
+
+    for each uncolored node:
+        queue.push(node)
+        expectedColor = 1
+
+        BFS level by level:
+            if node already colored with different color:
+                return false
+            color[node] = expectedColor
+            push uncolored neighbours
+            flip expectedColor between 1 and 2
+
+    return true`
+      }
+    ]
+  },
+  "directed-order": {
+    coverage: [
+      "Lecture4.cpp: topologicalSort",
+      "Lecture4.cpp: KahnsAlgo",
+      "Lecture4.cpp: canFinish",
+      "Lecture4.cpp: findOrder"
+    ],
+    blocks: [
+      {
+        title: "DFS topological sort",
+        source: "Lecture4.cpp:topologicalSort",
+        code: `function topoDFS(u):
+    visited[u] = true
+
+    for each v in graph[u]:
+        if visited[v] == false:
+            topoDFS(v)
+
+    add u to answer`
+      },
+      {
+        title: "Kahn topological sort",
+        source: "Lecture4.cpp:KahnsAlgo",
+        code: `function kahn(graph):
+    calculate indegree
+    push all nodes with indegree 0
+
+    while queue is not empty:
+        u = queue.pop()
+        ans.push(u)
+
+        for each v in graph[u]:
+            indegree[v]--
+            if indegree[v] == 0:
+                queue.push(v)
+
+    if ans.size < n:
+        cycle exists`
+      },
+      {
+        title: "course schedule",
+        source: "Lecture4.cpp:canFinish",
+        code: `function canFinish(n, prerequisites):
+    build directed graph
+    run Kahn algorithm
+
+    if processed nodes == n:
+        return true
+    else:
+        return false`
+      }
+    ]
+  },
+  dsu: {
+    coverage: [
+      "Lecture4.cpp: dsu",
+      "Lecture5.cpp: findRedundantConnection",
+      "Lecture5.cpp: smallestEquivalentstring",
+      "Lecture6.cpp: numIslands2",
+      "Lecture8.cpp: equationsPossible"
+    ],
+    blocks: [
+      {
+        title: "DSU parent and find",
+        source: "Lecture4/5/6/8.cpp:dsu",
+        code: `function init(n):
+    for i from 0 to n - 1:
+        parent[i] = i
+        size[i] = 1
+
+function find(x):
+    if parent[x] == x:
+        return x
+    parent[x] = find(parent[x])
+    return parent[x]`
+      },
+      {
+        title: "union",
+        source: "Lecture4/5/6/8.cpp:unite",
+        code: `function union(a, b):
+    pa = find(a)
+    pb = find(b)
+
+    if pa == pb:
+        return false
+
+    parent[pa] = pb
+    size[pb] = size[pb] + size[pa]
+    return true`
+      },
+      {
+        title: "smallest equivalent string",
+        source: "Lecture5.cpp:smallestEquivalentstring",
+        code: `function smallestEquivalentString(s1, s2, baseStr):
+    initialize DSU for 26 letters
+
+    for i from 0 to s1.length - 1:
+        union(s1[i], s2[i])
+        smaller parent must remain root
+
+    ans = ""
+    for ch in baseStr:
+        ans += find(ch)
+
+    return ans`
+      },
+      {
+        title: "number of islands 2",
+        source: "Lecture6.cpp:numIslands2",
+        code: `function numIslands2(operators):
+    grid = all water
+    count = 0
+
+    for each position in operators:
+        if position already land:
+            ans.push(count)
+            continue
+
+        mark position land
+        count++
+
+        for each land neighbour:
+            if union(position, neighbour) == true:
+                count--
+
+        ans.push(count)`
+      }
+    ]
+  },
+  mst: {
+    coverage: [
+      "Lecture7.cpp: Krushkal",
+      "Lecture7.cpp: Mr. President",
+      "Lecture7.cpp: minCostConnectPoints"
+    ],
+    blocks: [
+      {
+        title: "Kruskal MST",
+        source: "Lecture7.cpp:Krushkal",
+        code: `function kruskal(edges):
+    sort edges by weight
+    initialize DSU
+    mst = empty
+
+    for each edge (u, v, w):
+        if union(u, v) == true:
+            mst.push(edge)
+
+    return mst`
+      },
+      {
+        title: "min cost connect points",
+        source: "Lecture7.cpp:minCostConnectPoints",
+        code: `function minCostConnectPoints(points):
+    edges = empty
+
+    for every pair of points i, j:
+        w = manhattanDistance(i, j)
+        edges.push({i, j, w})
+
+    sort edges by weight
+    run Kruskal
+    return sum of selected weights`
+      },
+      {
+        title: "Mr President",
+        source: "Lecture7.cpp:solve",
+        code: `function mrPresident(n, edges, budget):
+    build MST using Kruskal
+    store weights selected in MST
+
+    if graph is not connected:
+        return -1
+
+    sort selected weights
+    changes = 0
+
+    while cost > budget and weights not empty:
+        replace largest selected weight by 1
+        changes++
+
+    if cost <= budget:
+        return changes
+    return -1`
+      }
+    ]
+  },
+  "shortest-paths": {
+    coverage: [
+      "Lecture8.cpp: Dj",
+      "Lecture9.cpp: networkDelayTime",
+      "Lecture9.cpp: findCheapestPrice",
+      "Lecture10.cpp: shortestDistance"
+    ],
+    blocks: [
+      {
+        title: "Dijkstra",
+        source: "Lecture8.cpp:Dj",
+        code: `function dijkstra(source):
+    dist[source] = 0
+    set.insert({0, source})
+
+    while set is not empty:
+        {cost, u} = set.removeSmallest()
+
+        if visited[u]:
+            continue
+
+        visited[u] = true
+
+        for each edge u-v with weight w:
+            if visited[v] == false:
+                set.insert({cost + w, v})`
+      },
+      {
+        title: "Dijkstra with distance array",
+        source: "Lecture9.cpp:networkDelayTime",
+        code: `function networkDelay(times, source):
+    build directed weighted graph
+    dist[source] = 0
+    set.insert({0, source})
+
+    while set is not empty:
+        {cost, u} = set.removeSmallest()
+        if visited[u]: continue
+        visited[u] = true
+
+        for each edge u-v with weight w:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                set.insert({dist[v], v})
+
+    if any node unvisited: return -1
+    return max(dist)`
+      },
+      {
+        title: "Bellman Ford for K stops",
+        source: "Lecture9.cpp:findCheapestPrice",
+        code: `function cheapestFlight(V, flights, src, dst, k):
+    dist[src] = 0
+
+    repeat k + 1 times:
+        next = copy of dist
+
+        for each flight u-v with price w:
+            if dist[u] is not infinity:
+                next[v] = min(next[v], dist[u] + w)
+
+        dist = next
+
+    if dist[dst] is infinity: return -1
+    return dist[dst]`
+      },
+      {
+        title: "Maze II",
+        source: "Lecture10.cpp:shortestDistance",
+        code: `function shortestDistance(maze, start, destination):
+    precompute stopping cell for every cell in 4 directions
+    set.insert({0, start})
+
+    while set is not empty:
+        {dist, cell} = set.removeSmallest()
+        if visited[cell]: continue
+        visited[cell] = true
+
+        if cell == destination:
+            return dist
+
+        for each direction:
+            nextCell = precomputedStop[cell][direction]
+            steps = distance between cell and nextCell
+            set.insert({dist + steps, nextCell})
+
+    return -1`
+      }
+    ]
+  },
+  "advanced-map": {
+    coverage: [
+      "Lecture11.cpp: KosaRajuAlgo",
+      "Lecture11.cpp: two Dijkstra runs",
+      "Lecture12LastClass.cpp: criticalConnections"
+    ],
+    blocks: [
+      {
+        title: "Kosaraju SCC",
+        source: "Lecture11.cpp:KosaRajuAlgo",
+        code: `function kosaraju(graph):
+    visited = false for all nodes
+    order = empty
+
+    for each node:
+        if not visited:
+            dfs1(node)
+
+    reverse all edges
+    visited = false for all nodes
+
+    for node in reverse(order):
+        if not visited[node]:
+            dfs2(node)
+            print one SCC
+
+function dfs1(u):
+    visited[u] = true
+    call dfs1 on unvisited neighbours
+    order.push(u)`
+      },
+      {
+        title: "critical connections",
+        source: "Lecture12LastClass.cpp:criticalConnections",
+        code: `function bridges(graph):
+    time = 1
+    disc = 0 for all nodes
+    low = 0 for all nodes
+
+    for each unvisited node:
+        dfs(node, parent = -1)
+
+function dfs(u, parent):
+    visited[u] = true
+    disc[u] = low[u] = time
+    time++
+
+    for each child in graph[u]:
+        if child == parent:
+            continue
+
+        if child not visited:
+            dfs(child, u)
+            low[u] = min(low[u], low[child])
+
+            if disc[u] < low[child]:
+                edge u-child is bridge
+        else:
+            low[u] = min(low[u], disc[child])`
+      },
+      {
+        title: "two-source Dijkstra",
+        source: "Lecture11.cpp:solve",
+        code: `function solve():
+    run dijkstra(friendSource)
+    run dijkstra(yourSource)
+
+    ans = infinity
+
+    for each special node:
+        if both distances exist and yourDistance < limit:
+            ans = min(ans, friendDistance + yourDistance)
+
+    if ans is infinity: print -1
+    else print ans`
+      }
+    ]
+  }
+};
+
 const practiceProblems = {
   lc200: {
     name: "LeetCode 200 - Number of Islands",
@@ -1924,37 +2726,9 @@ function renderLesson() {
           .map((item) => `<span class="source-pill">${escapeHtml(item.trim())}</span>`)
           .join("")}
       </div>
-      <p class="lesson-summary">${escapeHtml(lesson.summary)}</p>
     </div>
 
-    ${renderSourceGuide(lesson)}
-
-    <div class="concept-block">
-      <h4>Mental model</h4>
-      <p>${escapeHtml(lesson.mentalModel)}</p>
-    </div>
-
-    <div class="concept-block">
-      <h4>Core ideas</h4>
-      <ul class="concept-list">
-        ${lesson.keyIdeas.map((idea) => `<li>${escapeHtml(idea)}</li>`).join("")}
-      </ul>
-    </div>
-
-    <div class="code-card">
-      <header>
-        <span>${escapeHtml(lesson.codeLabel)}</span>
-        <span>C++ shape</span>
-      </header>
-      <pre><code>${escapeHtml(lesson.code)}</code></pre>
-    </div>
-
-    <div class="concept-block">
-      <h4>Before coding, ask</h4>
-      <ul class="check-list">
-        ${lesson.checklist.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-      </ul>
-    </div>
+    ${renderPseudocodeGuide(lesson)}
 
     <button class="mark-complete" type="button" id="completeLesson">
       ${state.completed.has(lesson.id) ? "Completed" : "Mark complete"}
@@ -1973,37 +2747,29 @@ function renderLesson() {
   });
 }
 
-function renderSourceGuide(lesson) {
-  const guide = lessonSourceGuides[lesson.id];
+function renderPseudocodeGuide(lesson) {
+  const guide = lessonPseudoGuides[lesson.id];
   if (!guide) return "";
 
   return `
-    <section class="source-guide">
-      <div class="source-guide-head">
-        <h4>From RajneeshSirGraph</h4>
-        <p>Read these as exact beginner recipes before writing code.</p>
-      </div>
-
+    <section class="pseudo-guide">
       <div class="coverage-box">
-        <strong>Covered source functions/problems</strong>
+        <strong>RajneeshSirGraph source</strong>
         <div class="coverage-list">
           ${guide.coverage.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
         </div>
       </div>
 
-      <div class="recipe-list">
-        ${guide.recipes
+      <div class="pseudo-list">
+        ${guide.blocks
           .map(
-            (recipe) => `
-              <article class="recipe-card">
+            (block) => `
+              <article class="pseudo-card">
                 <header>
-                  <span>${escapeHtml(recipe.source)}</span>
-                  <h5>${escapeHtml(recipe.title)}</h5>
+                  <span>${escapeHtml(block.source)}</span>
+                  <h4>${escapeHtml(block.title)}</h4>
                 </header>
-                <ol class="recipe-steps">
-                  ${recipe.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
-                </ol>
-                <p class="recipe-remember"><strong>Remember:</strong> ${escapeHtml(recipe.remember)}</p>
+                <pre><code>${escapeHtml(block.code)}</code></pre>
               </article>
             `
           )
