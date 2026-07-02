@@ -462,149 +462,6 @@ if (low[v] > disc[u]) {
   }
 ];
 
-const lessonDeepDives = {
-  "graph-basics": {
-    walkthrough: [
-      "Read any graph question by first translating nouns into vertices and relationships into edges. In Number of Islands, cells are vertices and neighboring land cells are edges. In Course Schedule, courses are vertices and prerequisites are directed edges.",
-      "After that, decide the graph type: undirected or directed, weighted or unweighted, connected or possibly disconnected. This one decision usually tells you whether DFS, BFS, DSU, topological sort, MST, or shortest path is the correct family.",
-      "The adjacency list is the most common competitive-programming representation because it lets each vertex store only the neighbors it actually has."
-    ],
-    dryRun:
-      "For edge 0-1 with weight 10 in an undirected graph, graph[0] stores (1,10) and graph[1] stores (0,10). If it is directed 0->1, only graph[0] stores 1.",
-    mistakes: [
-      "Storing an undirected edge only once.",
-      "Using a matrix when the graph is sparse and an adjacency list is simpler.",
-      "Forgetting that disconnected graphs need a loop over every vertex, not only one DFS from 0."
-    ]
-  },
-  "adjacency-operations": {
-    walkthrough: [
-      "Displaying the graph is not just for output. It is the fastest way to debug whether edges were inserted in the right direction and whether weights are attached to the correct neighbor.",
-      "Remove edge means delete the neighbor entry from both sides in an undirected graph. Remove vertex means repeatedly remove every edge touching that vertex.",
-      "When the graph stores pairs, do not compare the full pair unless the weight matters. Usually removal finds by neighbor vertex."
-    ],
-    dryRun:
-      "If vertex 2 has neighbors (1,10), (3,40), (7,2), removing edge 2-7 means erase 7 from graph[2] and erase 2 from graph[7].",
-    mistakes: [
-      "Deleting from one side only.",
-      "Skipping bounds checks while manually searching neighbor lists.",
-      "Assuming display order is sorted when insertion order controls it."
-    ]
-  },
-  "dfs-backtracking": {
-    walkthrough: [
-      "DFS answers reachability by going deep. Mark the current node before exploring neighbors so a cycle cannot trap recursion forever.",
-      "For one answer, return immediately when the destination is found. For all answers, keep exploring every unvisited neighbor and collect the path at the base case.",
-      "Backtracking is the part that restores state. If a vertex was marked only for the current path, unmark it before returning so another path can reuse it."
-    ],
-    dryRun:
-      "From 0, DFS may try 1, then 2, then 7, then 8. When 8 has no new neighbor, the call returns and DFS tries the next pending neighbor from the previous node.",
-    mistakes: [
-      "Not marking visited before recursive calls.",
-      "Unmarking visited in a normal connected-component DFS where nodes should stay done.",
-      "Using DFS for shortest path in an unweighted graph when BFS is the safer tool."
-    ]
-  },
-  "grid-graphs": {
-    walkthrough: [
-      "A grid graph usually avoids building an adjacency list. The neighbors are computed by direction arrays at runtime.",
-      "DFS/BFS starts from a valid cell, marks it visited, and expands to valid neighboring cells. The marking can be a separate visited matrix or an in-place grid change.",
-      "Boundary-based questions often flip the thinking: first mark everything connected to the boundary, then process what remains."
-    ],
-    dryRun:
-      "For a land cell (2,3), four-direction neighbors are (3,3), (1,3), (2,4), and (2,2). Only inside-grid land cells continue the DFS.",
-    mistakes: [
-      "Mixing up row and column bounds.",
-      "Using four directions when the problem allows eight directions, or the reverse.",
-      "Counting an island before marking it, which can double-count cells."
-    ]
-  },
-  "bfs-levels": {
-    walkthrough: [
-      "BFS is the natural choice when each move costs exactly one. The queue processes all nodes at distance d before any node at distance d+1.",
-      "If the answer is minutes, moves, semesters, or buses, think in levels. Store the queue size at the start of each level and process exactly that many entries.",
-      "For multi-source BFS, push every starting source first. This makes all sources distance 0 and lets the wave expand from all of them together."
-    ],
-    dryRun:
-      "If queue starts with all rotten oranges, level 1 rots every fresh orange adjacent to any rotten one. Level 2 rots the next ring.",
-    mistakes: [
-      "Marking visited only when popped, which can push the same cell many times.",
-      "Incrementing level after every node instead of after every queue layer.",
-      "Using BFS on weighted edges where one edge can cost more than another."
-    ]
-  },
-  "directed-order": {
-    walkthrough: [
-      "A directed graph can encode dependency: u -> v means u must happen before v, or v depends on u depending on how you build it. Be consistent.",
-      "Kahn's algorithm starts with all indegree-0 nodes. Removing a node means its outgoing edges no longer block children, so their indegree decreases.",
-      "If the final order has fewer than n nodes, some nodes were locked inside a cycle and no valid ordering exists."
-    ],
-    dryRun:
-      "If 4 points to 0 and 1, and 4 has indegree 0, process 4 first. That decreases indegree of 0 and 1 by one.",
-    mistakes: [
-      "Building prerequisite edges backward and then interpreting the order incorrectly.",
-      "Forgetting to detect cycles by comparing order size to n.",
-      "Using undirected visited logic on a directed cycle problem."
-    ]
-  },
-  dsu: {
-    walkthrough: [
-      "DSU does not explore the graph like DFS. It maintains groups while edges are added.",
-      "find(x) returns the representative of x's group. union(a,b) merges two groups only if their representatives differ.",
-      "When union fails, a and b were already connected. In an undirected graph edge stream, that is exactly the cycle signal."
-    ],
-    dryRun:
-      "Edges 1-2 and 2-3 merge {1,2,3}. If edge 1-3 arrives later, both endpoints already have the same representative, so the edge is redundant.",
-    mistakes: [
-      "Forgetting path compression, which makes repeated find calls slower.",
-      "Not initializing parent[i] = i.",
-      "Using DSU for directed reachability, where it usually loses direction information."
-    ]
-  },
-  mst: {
-    walkthrough: [
-      "MST problems ask for the cheapest way to connect everything. Cycles are wasteful because one edge in a cycle can be removed while the graph stays connected.",
-      "Kruskal sees all candidate edges, sorts by weight, and accepts an edge only when DSU says it connects two different components.",
-      "Prim starts from a node and repeatedly chooses the cheapest edge leaving the growing connected set."
-    ],
-    dryRun:
-      "If edges of weight 2 connect new components, Kruskal takes them first. A later weight-4 edge is skipped if its endpoints are already connected.",
-    mistakes: [
-      "Stopping before selecting n-1 edges.",
-      "Not handling disconnected graphs.",
-      "Using shortest path logic when the task asks to connect all nodes cheaply."
-    ]
-  },
-  "shortest-paths": {
-    walkthrough: [
-      "Weighted shortest path questions are about distance values, not just visited/unvisited. Relaxation is the central move: can current distance plus edge weight improve the neighbor?",
-      "Dijkstra works when all weights are non-negative. The priority set always picks the current smallest unfinished distance.",
-      "Bellman-Ford style loops are useful when the question limits stops or when negative edges appear. Each round represents one more edge allowed."
-    ],
-    dryRun:
-      "If dist[2] is 20 and edge 2-7 has weight 2, then candidate distance for 7 is 22. If dist[7] was infinity, update it to 22.",
-    mistakes: [
-      "Using normal BFS on non-equal weights.",
-      "Marking a node final too early when using the wrong data structure.",
-      "For maze rolling problems, treating one step as one cell instead of rolling until a wall."
-    ]
-  },
-  "advanced-map": {
-    walkthrough: [
-      "Advanced graph problems are usually combinations of simpler patterns. First classify the hidden ask: component, order, shortest route, cheap connection, or critical edge.",
-      "Kosaraju uses finish order and a reversed graph to group strongly connected components.",
-      "Bridge logic tracks discovery time and low-link values. A child subtree that cannot reach an ancestor makes the parent-child edge critical."
-    ],
-    dryRun:
-      "If DFS reaches child v from u and low[v] stays greater than disc[u], then v's subtree has no back edge to u or above. Edge u-v is a bridge.",
-    mistakes: [
-      "Trying to memorize every hard problem separately.",
-      "Not carrying enough state in BFS or Dijkstra.",
-      "Using an undirected bridge formula directly on directed SCC problems."
-    ]
-  }
-};
-
 const practiceProblems = {
   lc200: {
     name: "LeetCode 200 - Number of Islands",
@@ -1354,8 +1211,6 @@ function renderLesson() {
       </ul>
     </div>
 
-    ${renderLessonDeepDive(lesson)}
-
     <div class="code-card">
       <header>
         <span>${escapeHtml(lesson.codeLabel)}</span>
@@ -1386,40 +1241,6 @@ function renderLesson() {
     renderLessonNav();
     renderLesson();
   });
-}
-
-function renderLessonDeepDive(lesson) {
-  const dive = lessonDeepDives[lesson.id];
-  if (!dive) return "";
-  return `
-    <div class="concept-block">
-      <h4>Detailed walkthrough</h4>
-      <div class="deep-dive-grid">
-        ${dive.walkthrough
-          .map(
-            (item, index) => `
-              <article class="walkthrough-card">
-                <span>${index + 1}</span>
-                <p>${escapeHtml(item)}</p>
-              </article>
-            `
-          )
-          .join("")}
-      </div>
-    </div>
-
-    <div class="concept-block">
-      <h4>Tiny dry run</h4>
-      <p>${escapeHtml(dive.dryRun)}</p>
-    </div>
-
-    <div class="concept-block">
-      <h4>Common mistakes</h4>
-      <ul class="check-list">
-        ${dive.mistakes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-      </ul>
-    </div>
-  `;
 }
 
 function renderAlgorithmTabs() {

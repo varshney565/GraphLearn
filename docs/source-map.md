@@ -30,5 +30,4 @@ beginner course with:
 - a visual stepper for DFS, BFS, Dijkstra, Kahn, and Kruskal,
 - lesson-specific quizzes,
 - practice problem cards grouped by topic,
-- expandable solution-path guidance for each practice problem,
-- dry runs and common-mistake sections for each lesson.
+- expandable solution-path guidance for each practice problem.

@@ -19,7 +19,6 @@ browser, or serve the folder with any static server.
 - MST with Kruskal and Prim intuition
 - Weighted shortest paths with Dijkstra and Bellman-Ford style relaxation
 - Advanced map: SCC, bridges, maze variants, and premium problem patterns
-- Detailed lesson walkthroughs with dry runs and common mistakes
 - Expandable "Stuck? Show solution path" guides for every practice card
 
 ## Files

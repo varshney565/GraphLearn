@@ -374,38 +374,6 @@ h4 {
   padding-left: 1.1rem;
 }
 
-.deep-dive-grid {
-  display: grid;
-  gap: 10px;
-}
-
-.walkthrough-card {
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 10px;
-  align-items: start;
-  padding: 11px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: #fff9ed;
-}
-
-.walkthrough-card span {
-  display: inline-grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--teal-soft);
-  color: var(--teal);
-  font-size: 0.78rem;
-  font-weight: 900;
-}
-
-.walkthrough-card p {
-  color: #39443d;
-}
-
 .code-card {
   min-width: 0;
   margin-top: 16px;
