@@ -25,11 +25,11 @@ The source code is lecture-style C++ and assumes the learner already has some
 graph comfort. GraphLearn keeps the same topic progression, but rewrites it as a
 beginner course with:
 
-- plain-language mental models before code,
-- small C++ code shapes rather than full lecture files,
-- source-faithful step recipes for RajneeshSirGraph functions such as
+- short intuition for each algorithm,
+- commented C++-style templates for RajneeshSirGraph functions such as
   `hasPathHelper`, `TotalPaths`, `BFS_without_cycle`, `KahnsAlgo`, DSU,
   Kruskal, Dijkstra, Kosaraju, and bridges,
+- problem-specific code shapes kept inside expandable practice hints,
 - a visual stepper for DFS, BFS, Dijkstra, Kahn, and Kruskal,
 - lesson-specific quizzes,
 - practice problem cards grouped by topic,

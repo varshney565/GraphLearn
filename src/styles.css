@@ -446,6 +446,16 @@ h4 {
   font-size: 1rem;
 }
 
+.pseudo-intuition {
+  margin: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid #3a443f;
+  background: #f8fbf7;
+  color: #263029;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
 .pseudo-card pre {
   margin: 0;
   padding: 14px;
@@ -791,6 +801,10 @@ code {
 
 .solution-guide[open] summary {
   border-bottom: 1px solid #ded5c4;
+}
+
+.solution-guide:not([open]) .guide-body {
+  display: none;
 }
 
 .guide-body {

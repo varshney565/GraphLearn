@@ -19,13 +19,14 @@ browser, or serve the folder with any static server.
 - MST with Kruskal and Prim intuition
 - Weighted shortest paths with Dijkstra and Bellman-Ford style relaxation
 - Advanced map: SCC, bridges, maze variants, and premium problem patterns
-- Source-faithful RajneeshSirGraph recipes for the lecture functions
-- Expandable "Stuck? Show solution path" guides for every practice card
+- Algorithm intuition with commented source-style code templates
+- Problem-specific solution hints kept inside expandable practice cards
 
 ## Files
 
 - `index.html` - app shell
 - `src/styles.css` - responsive UI styling
+- `src/teaching-guides.js` - algorithm intuition and commented templates
 - `src/app.js` - lesson data, quizzes, graph rendering, algorithm steppers
 - `docs/source-map.md` - how the lessons map back to the original lectures
 

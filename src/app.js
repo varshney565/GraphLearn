@@ -2748,7 +2748,7 @@ function renderLesson() {
 }
 
 function renderPseudocodeGuide(lesson) {
-  const guide = lessonPseudoGuides[lesson.id];
+  const guide = window.lessonTeachingGuides?.[lesson.id];
   if (!guide) return "";
 
   return `
@@ -2769,6 +2769,7 @@ function renderPseudocodeGuide(lesson) {
                   <span>${escapeHtml(block.source)}</span>
                   <h4>${escapeHtml(block.title)}</h4>
                 </header>
+                ${block.intuition ? `<p class="pseudo-intuition">${escapeHtml(block.intuition)}</p>` : ""}
                 <pre><code>${escapeHtml(block.code)}</code></pre>
               </article>
             `
@@ -2832,7 +2833,7 @@ function renderProblemGuide(id, guide) {
   const data = guide || fallback;
   return `
     <details class="solution-guide">
-      <summary>Stuck? Show solution path</summary>
+      <summary>Hint: show intuition and code shape</summary>
       <div class="guide-body">
         <div>
           <span class="guide-label">Pattern</span>
