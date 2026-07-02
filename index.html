@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GraphLearn</title>
+    <meta
+      name="description"
+      content="A beginner-first graph learning UI based on RajneeshSirGraph lectures."
+    >
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23fffdf7'/%3E%3Cpath d='M18 20 42 30 24 46' fill='none' stroke='%231d2521' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='20' r='7' fill='%23d7eee8' stroke='%231d2521' stroke-width='4'/%3E%3Ccircle cx='42' cy='30' r='7' fill='%23f6e7c8' stroke='%231d2521' stroke-width='4'/%3E%3Ccircle cx='24' cy='46' r='7' fill='%23f7ddd6' stroke='%231d2521' stroke-width='4'/%3E%3C/svg%3E"
+    >
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Graph learning path">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div>
+            <p class="eyebrow">GraphLearn</p>
+            <h1>Graphs, From Zero</h1>
+          </div>
+        </div>
+
+        <div class="progress-card">
+          <div>
+            <p class="eyebrow">Course Progress</p>
+            <strong id="progressText">0 of 10 lessons</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span id="progressBar"></span>
+          </div>
+        </div>
+
+        <nav id="lessonNav" class="lesson-nav"></nav>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Based on RajneeshSirGraph</p>
+            <h2 id="lessonTitle">Loading...</h2>
+          </div>
+          <a
+            id="sourceLink"
+            class="source-link"
+            href="https://github.com/varshney565/Graph/tree/main/RajneeshSirGraph"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Source
+          </a>
+        </header>
+
+        <section class="lesson-grid" aria-label="Current lesson">
+          <article class="lesson-pane">
+            <div id="lessonContent"></div>
+          </article>
+
+          <section class="visualizer-pane" aria-label="Interactive graph visualizer">
+            <div class="visualizer-head">
+              <div>
+                <p class="eyebrow">Algorithm Lab</p>
+                <h3 id="algorithmTitle">DFS</h3>
+              </div>
+              <div class="segmented" id="algorithmTabs" role="tablist"></div>
+            </div>
+
+            <div class="graph-stage">
+              <svg id="graphSvg" viewBox="0 0 720 420" role="img" aria-label="Graph visualization"></svg>
+            </div>
+
+            <div class="step-console">
+              <div>
+                <p id="stepCounter" class="eyebrow">Step 1 of 1</p>
+                <h4 id="stepTitle">Ready</h4>
+                <p id="stepDetail">Choose an algorithm to begin.</p>
+              </div>
+              <div class="step-controls" aria-label="Step controls">
+                <button class="icon-button" id="resetStep" type="button" title="Reset" aria-label="Reset">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 12a8 8 0 1 0 2.34-5.66"></path>
+                    <path d="M4 4v6h6"></path>
+                  </svg>
+                </button>
+                <button class="icon-button" id="prevStep" type="button" title="Previous" aria-label="Previous">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m15 18-6-6 6-6"></path>
+                  </svg>
+                </button>
+                <button class="icon-button primary" id="playStep" type="button" title="Play" aria-label="Play">
+                  <svg id="playIcon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5v14l11-7z"></path>
+                  </svg>
+                </button>
+                <button class="icon-button" id="nextStep" type="button" title="Next" aria-label="Next">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m9 18 6-6-6-6"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="data-strip" id="algorithmData"></div>
+          </section>
+        </section>
+
+        <section class="practice-band" aria-label="Practice and review">
+          <div class="practice-column">
+            <div class="section-heading">
+              <p class="eyebrow">Practice</p>
+              <h3>Problems From This Topic</h3>
+            </div>
+            <div id="practiceList" class="practice-list"></div>
+          </div>
+
+          <div class="quiz-column">
+            <div class="section-heading">
+              <p class="eyebrow">Check Yourself</p>
+              <h3>One Small Question</h3>
+            </div>
+            <div id="quizBox" class="quiz-box"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="src/app.js"></script>
+  </body>
+</html>
