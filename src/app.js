@@ -6,33 +6,32 @@ const sourceRoot =
 const lessons = [
   {
     id: "graph-basics",
-    title: "What A Graph Is",
-    shortTitle: "Graph Basics",
+    title: "Graph Representation",
+    shortTitle: "Representation",
     source: "Lecture1.cpp",
-    stage: "Start here",
+    stage: "Foundation",
     summary:
-      "A graph is a set of things and connections between those things. In code, the things are vertices, the connections are edges, and the question decides whether direction or weight matters.",
+      "Before DFS, BFS, DSU, MST, or shortest path, first learn how Rajneesh sir stores a graph: adjacency list, pair(neighbour, weight), add edge, display, remove edge, and remove vertex.",
     mentalModel:
-      "Think of a graph as a city map. Intersections are vertices, roads are edges, and road length is the weight. If a road is one-way, the graph is directed.",
+      "Each vertex keeps its own neighbour list. For an undirected road u-v, both u and v must write each other in their lists.",
     keyIdeas: [
-      "Vertex: one item in the graph.",
-      "Edge: a relationship between two vertices.",
-      "Weight: a number stored on an edge, often cost, distance, time, or effort.",
-      "Undirected edge: both endpoints can reach each other.",
-      "Directed edge: the connection has an arrow."
+      "Use vector<vector<pair<int,int>>> when every edge has a neighbour and weight.",
+      "addEdge for an undirected graph pushes the edge on both sides.",
+      "display helps verify whether the graph was built correctly.",
+      "removeEdge and removeVtx must also clean both sides of an undirected edge."
     ],
-    codeLabel: "Adjacency list with weights",
+    codeLabel: "RajneeshSirGraph adjacency list",
     code: `vector<vector<pair<int,int>>> graph(n);
 
 void addEdge(int u, int v, int w) {
   graph[u].push_back({v, w});
-  graph[v].push_back({u, w}); // skip this line for directed graphs
+  graph[v].push_back({u, w});
 }`,
     checklist: [
-      "Can I name the vertices?",
-      "Are edges one-way or two-way?",
-      "Do I need weights?",
-      "Can one graph have multiple disconnected parts?"
+      "Did I store both directions for an undirected edge?",
+      "Did I print the graph once to check adjacency?",
+      "When deleting, did I delete the reverse edge too?",
+      "Can my graph have disconnected components?"
     ],
     practice: ["lc200", "lc463", "lc684"],
     quiz: {
@@ -49,54 +48,59 @@ void addEdge(int u, int v, int w) {
   },
   {
     id: "adjacency-operations",
-    title: "Build, Display, Remove",
-    shortTitle: "Graph Storage",
-    source: "Lecture1.cpp",
-    stage: "Representation",
+    title: "Cycle Detection",
+    shortTitle: "Cycles",
+    source: "Lecture3.cpp, Lecture4.cpp, Lecture5.cpp, Lecture8.cpp",
+    stage: "Core pattern",
     summary:
-      "Before solving graph problems, get comfortable changing the graph itself. Adding edges, printing neighbors, removing an edge, and removing a vertex teach how adjacency lists really behave.",
+      "Cycle detection appears in many forms: repeated BFS pop, odd-cycle bipartite failure, directed recursion states, DSU union failure, and Kahn's algorithm not processing all nodes.",
     mentalModel:
-      "Each vertex owns a small contact list. Adding an edge adds a contact. Removing a vertex means asking each neighbor to delete that contact too.",
+      "A cycle means you reached something in a way that should not be possible for that algorithm: an already connected DSU group, a currently visiting directed node, or a node that never reaches indegree 0.",
     keyIdeas: [
-      "Displaying a graph is just looping over every vertex and every neighbor.",
-      "Removing one undirected edge must update two neighbor lists.",
-      "Removing a vertex is repeated edge removal.",
-      "The total display cost is proportional to the number of stored edges."
+      "Undirected BFS can detect a cycle when a popped vertex was already visited.",
+      "Directed DFS needs states: unvisited, visiting, done.",
+      "DSU detects an undirected cycle when union(u,v) fails.",
+      "Kahn detects a directed cycle when processed count is less than n.",
+      "Bipartite detection fails on odd cycles."
     ],
-    codeLabel: "Display the graph",
-    code: `for (int u = 0; u < n; u++) {
-  cout << u << " -> ";
-  for (auto [v, w] : graph[u]) {
-    cout << "(" << v << ", " << w << ") ";
+    codeLabel: "Directed cycle state idea",
+    code: `// 0 = unvisited, 1 = currently visiting, 2 = done
+bool dfs(int u) {
+  state[u] = 1;
+  for (int v : graph[u]) {
+    if (state[v] == 1) return true;
+    if (state[v] == 0 && dfs(v)) return true;
   }
-  cout << "\\n";
+  state[u] = 2;
+  return false;
 }`,
     checklist: [
-      "If I remove u-v, did I also remove v-u?",
-      "Am I looping over neighbors, not all vertices, when possible?",
-      "Does my display show enough information to debug the graph?"
+      "Is the graph directed or undirected?",
+      "Do I need to identify the cycle, or only know it exists?",
+      "Can DSU solve it because edges are undirected?",
+      "Can Kahn solve it because the graph is a prerequisite/order graph?"
     ],
-    practice: ["lc684", "lc990", "lc1061"],
+    practice: ["lc684", "lc207", "lc785", "lc886"],
     quiz: {
-      question: "Why is an adjacency list usually better than a matrix for sparse graphs?",
+      question: "What does a failed DSU union usually mean in an undirected edge stream?",
       options: [
-        "It stores only existing edges.",
-        "It automatically sorts neighbors.",
-        "It makes every algorithm constant time."
+        "The new edge connects vertices already in the same component.",
+        "The graph is definitely directed.",
+        "The edge has the smallest weight."
       ],
       answer: 0,
       feedback:
-        "Sparse graphs have far fewer edges than V*V, so storing only real neighbors saves memory and scanning time."
+        "If both endpoints already have the same DSU parent, adding that edge creates a cycle."
     }
   },
   {
     id: "dfs-backtracking",
-    title: "DFS And Backtracking",
-    shortTitle: "DFS Paths",
+    title: "DFS On Graph",
+    shortTitle: "DFS",
     source: "Lecture1.cpp",
     stage: "Traversal",
     summary:
-      "Depth-first search explores one road as far as possible before trying the next road. Backtracking lets one path finish, then restores the state so another path can be tried.",
+      "DFS on a normal graph follows Rajneesh sir's basic recipe: mark visited, go to all unvisited neighbours, and unmark only when the problem needs different candidate paths.",
     mentalModel:
       "DFS is like walking through a maze with chalk. Mark a room before entering. If a path finishes, erase temporary chalk when the question needs all possible paths.",
     keyIdeas: [
@@ -137,12 +141,12 @@ void addEdge(int u, int v, int w) {
   },
   {
     id: "grid-graphs",
-    title: "Grids Are Graphs Too",
+    title: "DFS On Grid",
     shortTitle: "Grid DFS",
     source: "Lecture2.cpp, Lecture3.cpp, Lecture6.cpp",
     stage: "Matrix patterns",
     summary:
-      "A cell in a matrix can be treated as a vertex. The four neighboring cells are edges. That one idea explains islands, perimeter, surrounded regions, enclaves, and sub-islands.",
+      "Grid DFS is the same DFS idea, but neighbours are created with direction arrays instead of an adjacency list.",
     mentalModel:
       "A grid problem hides the graph. Instead of graph[u], you compute neighbors by moving up, down, left, and right.",
     keyIdeas: [
@@ -181,12 +185,12 @@ for (auto [dx, dy] : dir) {
   },
   {
     id: "bfs-levels",
-    title: "BFS, Levels, And Minutes",
-    shortTitle: "BFS Levels",
+    title: "BFS And Levels",
+    shortTitle: "BFS",
     source: "Lecture3.cpp",
     stage: "Shortest unweighted",
     summary:
-      "Breadth-first search expands evenly. That makes it perfect when every move costs the same and the answer is the minimum number of moves, levels, or minutes.",
+      "BFS uses a queue. Rajneesh sir teaches two forms: mark on pop when cycle detection matters, and mark on push when you only need clean level traversal.",
     mentalModel:
       "BFS is a wave. Everything at distance 1 is handled before distance 2, so the first time you reach a node is the shortest unweighted distance.",
     keyIdeas: [
@@ -233,12 +237,12 @@ for (int level = 0; !q.empty(); level++) {
   },
   {
     id: "directed-order",
-    title: "Directed Graphs And Order",
+    title: "Topological Sort",
     shortTitle: "Topo Sort",
-    source: "Lecture4.cpp, Lecture5.cpp",
+    source: "Lecture4.cpp",
     stage: "DAG thinking",
     summary:
-      "Some graphs describe prerequisites. Topological sort gives a valid order only when the directed graph has no cycle.",
+      "Topological sort is for directed order problems. The repo teaches both DFS postorder and Kahn's indegree algorithm.",
     mentalModel:
       "A course schedule is a graph of dependencies. A task with indegree 0 has no unfinished prerequisite and can be taken now.",
     keyIdeas: [
@@ -462,6 +466,698 @@ if (low[v] > disc[u]) {
   }
 ];
 
+const lessonOrder = [
+  "graph-basics",
+  "dfs-backtracking",
+  "grid-graphs",
+  "bfs-levels",
+  "adjacency-operations",
+  "directed-order",
+  "dsu",
+  "mst",
+  "shortest-paths",
+  "advanced-map"
+];
+
+lessons.sort((a, b) => lessonOrder.indexOf(a.id) - lessonOrder.indexOf(b.id));
+
+const lessonSourceGuides = {
+  "graph-basics": {
+    coverage: [
+      "Lecture1.cpp: addEdge",
+      "Lecture1.cpp: weighted adjacency list",
+      "Lecture1.cpp: display",
+      "Lecture1.cpp: removeEdge",
+      "Lecture1.cpp: removeVtx"
+    ],
+    recipes: [
+      {
+        title: "Build an undirected weighted graph",
+        source: "Lecture1.cpp:addEdge",
+        steps: [
+          "Create adj as vector<vector<pair<int,int>>>.",
+          "For edge u-v with weight w, push {v,w} inside adj[u].",
+          "Because the graph is undirected, also push {u,w} inside adj[v].",
+          "For a directed edge, do only the first push."
+        ],
+        remember:
+          "If one undirected edge is stored only once, DFS/BFS from the other side will behave as if the road does not exist."
+      },
+      {
+        title: "Display the graph for debugging",
+        source: "Lecture1.cpp:display",
+        steps: [
+          "Loop over every vertex u from 0 to V-1.",
+          "Print u first.",
+          "Loop over every pair stored in adj[u].",
+          "Print neighbor and weight as (v,w)."
+        ],
+        remember:
+          "Rajneesh sir uses display after build/remove operations because wrong adjacency is the first bug to catch."
+      },
+      {
+        title: "Remove one undirected edge",
+        source: "Lecture1.cpp:removeEdge",
+        steps: [
+          "Go to adj[u] and find the pair whose first value is v.",
+          "Erase that pair from adj[u].",
+          "Go to adj[v] and find the pair whose first value is u.",
+          "Erase that pair from adj[v]."
+        ],
+        remember:
+          "For undirected graphs, removal is also two-sided, same as insertion."
+      },
+      {
+        title: "Remove a vertex",
+        source: "Lecture1.cpp:removeVtx",
+        steps: [
+          "Look at all neighbours currently stored for vertex u.",
+          "Remove the edge u-neighbour from u's list.",
+          "Also remove the reverse edge neighbour-u from that neighbour's list.",
+          "Repeat until u has no remaining edges."
+        ],
+        remember:
+          "Loop from the back while deleting so index shifting does not skip edges."
+      }
+    ]
+  },
+  "adjacency-operations": {
+    coverage: [
+      "Lecture3.cpp: BFS with cycle detection",
+      "Lecture3.cpp: isBipartite",
+      "Lecture3.cpp: possibleBipartition",
+      "Lecture4.cpp: Kahn cycle check",
+      "Lecture5.cpp: directed cycle states",
+      "Lecture5.cpp: findRedundantConnection"
+    ],
+    recipes: [
+      {
+        title: "Undirected BFS cycle detection",
+        source: "Lecture3.cpp:BFS",
+        steps: [
+          "Push source into queue.",
+          "Pop one vertex.",
+          "If it is already visited, a cycle reached it again.",
+          "Otherwise mark it visited.",
+          "Push all unvisited neighbours."
+        ],
+        remember:
+          "This is the BFS version where you mark on pop so a repeated pop can reveal a cycle."
+      },
+      {
+        title: "Directed cycle detection",
+        source: "Lecture5.cpp:isCycle",
+        steps: [
+          "Use 0 for unvisited.",
+          "Use 1 for currently visiting in this DFS path.",
+          "Use 2 for fully processed.",
+          "When DFS sees a neighbour with state 1, a directed cycle exists.",
+          "After all children finish, set current state to 2."
+        ],
+        remember:
+          "A directed cycle is about recursion path, not just whether a node was visited sometime before."
+      },
+      {
+        title: "DSU cycle detection",
+        source: "Lecture5.cpp:findRedundantConnection",
+        steps: [
+          "Initialize each node as its own parent.",
+          "Process undirected edges one by one.",
+          "For each edge u-v, call unite(u,v).",
+          "If unite returns false, u and v were already connected.",
+          "That edge is creating the cycle."
+        ],
+        remember:
+          "DSU cycle detection is for undirected connectivity, not directed dependency order."
+      },
+      {
+        title: "Kahn cycle detection",
+        source: "Lecture4.cpp:KahnsAlgo",
+        steps: [
+          "Build indegree for every node.",
+          "Push all nodes with indegree 0.",
+          "Pop nodes and reduce indegree of their children.",
+          "Count how many nodes were popped.",
+          "If popped count is less than n, the remaining nodes are stuck in a cycle."
+        ],
+        remember:
+          "A directed cycle never becomes indegree 0, so Kahn cannot remove all nodes."
+      },
+      {
+        title: "Odd-cycle detection with bipartite BFS",
+        source: "Lecture3.cpp:isBipartite",
+        steps: [
+          "Color source with color 1.",
+          "BFS level by level.",
+          "Next level gets color 2.",
+          "If a vertex is reached with a conflicting color, return false.",
+          "That conflict means an odd cycle exists."
+        ],
+        remember:
+          "A graph with no cycle is bipartite. A graph with only even cycles is also bipartite."
+      }
+    ]
+  },
+  "dfs-backtracking": {
+    coverage: [
+      "Lecture1.cpp: hasPathHelper",
+      "Lecture1.cpp: TotalPaths",
+      "Lecture1.cpp: preorder",
+      "Lecture1.cpp: HeavyPath",
+      "Lecture1.cpp: HamiltonPaths",
+      "Lecture2.cpp: GetConnectedComponents"
+    ],
+    recipes: [
+      {
+        title: "DFS: check whether a path exists",
+        source: "Lecture1.cpp:hasPathHelper",
+        steps: [
+          "If src is dest, return true.",
+          "Mark visited[src] = true.",
+          "Go to all neighbours of src one by one.",
+          "If a neighbour is unvisited, call DFS on that neighbour.",
+          "If any recursive call returns true, return true.",
+          "If no neighbour works, return false."
+        ],
+        remember:
+          "For simple hasPath, do not unmark while returning. Once a node is fully checked, it can stay visited."
+      },
+      {
+        title: "DFS: count all paths",
+        source: "Lecture1.cpp:TotalPaths",
+        steps: [
+          "If src is dest, increase answer and return.",
+          "Mark visited[src] = true.",
+          "Call DFS on every unvisited neighbour.",
+          "After all neighbours finish, unmark visited[src] = false.",
+          "This lets the same vertex appear in a different path later."
+        ],
+        remember:
+          "The unmark step is the backtracking step. Use it for all paths, Hamiltonian path, and path search problems."
+      },
+      {
+        title: "Preorder path printing",
+        source: "Lecture1.cpp:preorder",
+        steps: [
+          "Mark the current vertex.",
+          "Add current vertex to the path string.",
+          "Print current vertex, full path so far, and cost so far.",
+          "Recurse to every unvisited neighbour with cost + edge weight.",
+          "Unmark while returning so other paths can be printed."
+        ],
+        remember:
+          "Preorder means print before going deeper."
+      },
+      {
+        title: "Heaviest path",
+        source: "Lecture1.cpp:HeavyPath",
+        steps: [
+          "Carry path string and weight-so-far in recursion.",
+          "When src reaches dest, compare weight-so-far with best answer.",
+          "If current weight is bigger, update best weight and best path.",
+          "Explore all unvisited neighbours.",
+          "Unmark while returning because another candidate path may need this vertex."
+        ],
+        remember:
+          "This is not Dijkstra. It searches all simple paths and keeps the maximum weight."
+      },
+      {
+        title: "Hamiltonian path and cycle",
+        source: "Lecture1.cpp:HamiltonPaths",
+        steps: [
+          "Carry count of visited vertices in the current path.",
+          "When count becomes graph size, a Hamiltonian path is found.",
+          "Check whether the last vertex has an edge back to the original source.",
+          "If yes, mark it as a Hamiltonian cycle.",
+          "Backtrack by unmarking before returning."
+        ],
+        remember:
+          "Hamiltonian means every vertex is used exactly once in one path."
+      },
+      {
+        title: "Connected components",
+        source: "Lecture2.cpp:GetConnectedComponents",
+        steps: [
+          "Make visited false for every vertex.",
+          "Loop i from 0 to n-1.",
+          "If i is not visited, start DFS from i.",
+          "That one DFS marks one complete component.",
+          "Increase component count after that DFS finishes."
+        ],
+        remember:
+          "When the graph may be disconnected, always keep the outer loop over all vertices."
+      }
+    ]
+  },
+  "grid-graphs": {
+    coverage: [
+      "Lecture2.cpp: numIslands",
+      "Lecture2.cpp: maxAreaOfIsland",
+      "Lecture2.cpp: islandPerimeter",
+      "Lecture2.cpp: Surrounded Regions",
+      "Lecture3.cpp: numberofDistinctIslands",
+      "Lecture3.cpp: numEnclaves",
+      "Lecture6.cpp: countSubIslands"
+    ],
+    recipes: [
+      {
+        title: "Grid DFS: Number of Islands",
+        source: "Lecture2.cpp:numIslands",
+        steps: [
+          "Treat each land cell as one graph vertex.",
+          "Loop over every cell.",
+          "When grid[i][j] is land, start DFS and increase island count.",
+          "Inside DFS, mark the current land cell as water.",
+          "Call DFS on all valid four-direction land neighbours."
+        ],
+        remember:
+          "The grid itself can be the visited array when you are allowed to modify it."
+      },
+      {
+        title: "Grid DFS: Max Area of Island",
+        source: "Lecture2.cpp:maxAreaOfIsland",
+        steps: [
+          "When you find land, reset temp area to 0.",
+          "DFS marks current cell as water.",
+          "Increase temp for every cell consumed by that DFS.",
+          "After DFS finishes, update ans = max(ans, temp)."
+        ],
+        remember:
+          "Same DFS as islands, but now each component returns a size."
+      },
+      {
+        title: "Boundary DFS: Surrounded Regions",
+        source: "Lecture2.cpp:solve",
+        steps: [
+          "Run DFS only from boundary cells that contain O.",
+          "Mark safe boundary-connected O cells as T.",
+          "After boundary DFS, scan the full board.",
+          "Flip remaining O to X.",
+          "Turn T back to O."
+        ],
+        remember:
+          "Do not start from the middle first. The safe region is discovered from the boundary."
+      },
+      {
+        title: "Distinct island shape",
+        source: "Lecture3.cpp:numberofDistinctIslands",
+        steps: [
+          "Start DFS for each island.",
+          "When moving in direction i, append i to a shape string.",
+          "When backtracking, append b.",
+          "Insert the final string into a set.",
+          "The set size is the number of distinct island shapes."
+        ],
+        remember:
+          "The backtracking marker b is important. Without it, different shapes can create the same string."
+      },
+      {
+        title: "Sub-islands",
+        source: "Lecture6.cpp:countSubIslands",
+        steps: [
+          "DFS each island in grid2.",
+          "While visiting grid2 cells, check the same cell in grid1.",
+          "If any grid2 land cell sits on grid1 water, mark this island invalid.",
+          "After DFS, count it only if it stayed valid."
+        ],
+        remember:
+          "You validate the whole component, not only the starting cell."
+      }
+    ]
+  },
+  "bfs-levels": {
+    coverage: [
+      "Lecture3.cpp: BFS",
+      "Lecture3.cpp: BFS_without_cycle",
+      "Lecture3.cpp: isBipartite",
+      "Lecture3.cpp: orangesRotting",
+      "Lecture3.cpp: possibleBipartition",
+      "Lecture3.cpp: shortestPathBinaryMatrix",
+      "Lecture3.cpp: updateMatrix",
+      "Lecture8.cpp: numBusesToDestination"
+    ],
+    recipes: [
+      {
+        title: "BFS when cycle detection matters",
+        source: "Lecture3.cpp:BFS",
+        steps: [
+          "Push source into the queue.",
+          "Do not mark immediately if you want to detect a repeated pop.",
+          "Pop front.",
+          "If already visited, a cycle path reached this vertex again.",
+          "Otherwise mark it and push all unvisited neighbours."
+        ],
+        remember:
+          "This version can let the same vertex enter the queue more than once, so the queue can grow up to O(E)."
+      },
+      {
+        title: "BFS when cycle detection is not needed",
+        source: "Lecture3.cpp:BFS_without_cycle",
+        steps: [
+          "Push source into queue.",
+          "Mark source immediately.",
+          "Pop one vertex.",
+          "For each unvisited neighbour, mark it immediately and push it.",
+          "Use queue size to separate levels."
+        ],
+        remember:
+          "Mark on push when you only need shortest level or visitation, because it avoids duplicate queue entries."
+      },
+      {
+        title: "Rotting oranges",
+        source: "Lecture3.cpp:orangesRotting",
+        steps: [
+          "Push all initially rotten oranges into the queue.",
+          "Each BFS level represents one minute.",
+          "From every rotten orange, rot fresh four-direction neighbours.",
+          "Push newly rotten oranges for the next minute.",
+          "After BFS, if any fresh orange remains, return -1."
+        ],
+        remember:
+          "This is multi-source BFS. All rotten oranges start at time 0 together."
+      },
+      {
+        title: "Bipartite graph",
+        source: "Lecture3.cpp:isBipartite",
+        steps: [
+          "Use colors 1 and 2.",
+          "Start BFS from every unvisited component.",
+          "All vertices in the current level get the current color.",
+          "Next level gets 3 - color.",
+          "If a visited vertex appears with the wrong color, return false."
+        ],
+        remember:
+          "Odd cycle means not bipartite. Even cycle is okay."
+      },
+      {
+        title: "01 Matrix and shortest binary matrix",
+        source: "Lecture3.cpp:updateMatrix / shortestPathBinaryMatrix",
+        steps: [
+          "For 01 Matrix, push all zero cells first.",
+          "For binary matrix shortest path, push only the start cell.",
+          "Use BFS levels as distance.",
+          "Mark cells as soon as they are pushed or consumed.",
+          "Use four directions for 01 Matrix and eight directions for binary matrix."
+        ],
+        remember:
+          "Direction count comes from the problem statement. Do not assume four directions every time."
+      }
+    ]
+  },
+  "directed-order": {
+    coverage: [
+      "Lecture4.cpp: topologicalSort",
+      "Lecture4.cpp: KahnsAlgo",
+      "Lecture4.cpp: canFinish",
+      "Lecture4.cpp: findOrder"
+    ],
+    recipes: [
+      {
+        title: "DFS topological sort",
+        source: "Lecture4.cpp:topologicalSort",
+        steps: [
+          "Run DFS from every unvisited vertex.",
+          "Inside DFS, mark the current vertex.",
+          "Visit all unvisited outgoing neighbours.",
+          "Print or push the current vertex after all children finish."
+        ],
+        remember:
+          "Topo DFS works by postorder. A node is added after its dependencies below it are handled."
+      },
+      {
+        title: "Kahn algorithm",
+        source: "Lecture4.cpp:KahnsAlgo",
+        steps: [
+          "Build indegree for every vertex.",
+          "Push all vertices with indegree 0.",
+          "Pop one vertex and add it to answer.",
+          "For each outgoing neighbour, decrease indegree.",
+          "When a neighbour indegree becomes 0, push it.",
+          "If answer size is less than n, there is a cycle."
+        ],
+        remember:
+          "Indegree 0 means no pending prerequisite."
+      },
+      {
+        title: "Course Schedule",
+        source: "Lecture4.cpp:canFinish / findOrder",
+        steps: [
+          "Convert prerequisites into directed edges.",
+          "Run the Kahn algorithm.",
+          "For canFinish, return true only if all courses are removed.",
+          "For findOrder, return the order; if a cycle remains, return empty.",
+          "Reverse only if your edge direction in code requires it."
+        ],
+        remember:
+          "Course problems are mostly topo sort plus careful edge direction."
+      }
+    ]
+  },
+  dsu: {
+    coverage: [
+      "Lecture4.cpp: dsu for Journey to the Moon",
+      "Lecture5.cpp: findRedundantConnection",
+      "Lecture5.cpp: smallestEquivalentstring",
+      "Lecture6.cpp: maxAreaOfIsland DSU",
+      "Lecture6.cpp: numSimilarGroups",
+      "Lecture6.cpp: numIslands2",
+      "Lecture8.cpp: minMalwareSpread",
+      "Lecture8.cpp: regionsBySlashes",
+      "Lecture8.cpp: equationsPossible"
+    ],
+    recipes: [
+      {
+        title: "DSU skeleton",
+        source: "Lecture4/5/6/8.cpp:dsu",
+        steps: [
+          "Initialize parent[i] = i.",
+          "find/get returns the final parent of a node.",
+          "Use path compression: parent[x] = find(parent[x]).",
+          "unite(a,b) finds both parents.",
+          "If parents are same, return false.",
+          "Otherwise merge one parent into the other and return true."
+        ],
+        remember:
+          "unite returning false usually means this edge tried to create a cycle or connect an already connected group."
+      },
+      {
+        title: "Redundant connection",
+        source: "Lecture5.cpp:findRedundantConnection",
+        steps: [
+          "Create DSU with n+1 nodes.",
+          "Process edges in input order.",
+          "If unite(u,v) succeeds, keep going.",
+          "If unite(u,v) fails, this edge is redundant.",
+          "Return that edge."
+        ],
+        remember:
+          "For an undirected graph, the first failed union is the cycle edge."
+      },
+      {
+        title: "Smallest equivalent string",
+        source: "Lecture5.cpp:smallestEquivalentstring",
+        steps: [
+          "Create DSU for 26 letters.",
+          "Union matching characters from s1 and s2.",
+          "When merging, keep the smaller letter as parent.",
+          "For every character in baseStr, append its parent letter."
+        ],
+        remember:
+          "Normal DSU can choose any parent; this problem needs the smallest parent."
+      },
+      {
+        title: "Dynamic islands",
+        source: "Lecture6.cpp:numIslands2",
+        steps: [
+          "Start with all water and component count 0.",
+          "When an operator adds new land, increase count by 1.",
+          "Check four land neighbours.",
+          "For every successful union with a neighbour, decrease count by 1.",
+          "Append current count after each operator."
+        ],
+        remember:
+          "Adding duplicate land should not change the count."
+      },
+      {
+        title: "Regions by slashes and malware",
+        source: "Lecture8.cpp:regionsBySlashes / minMalwareSpread",
+        steps: [
+          "For regions by slashes, model grid points as DSU nodes.",
+          "Connect the outside boundary to node 0.",
+          "Each slash tries to connect two boundary points.",
+          "A failed union means one new closed region.",
+          "For malware, store component size and infected count in the DSU root."
+        ],
+        remember:
+          "DSU can count more than components if the root also stores size, infection count, or other metadata."
+      }
+    ]
+  },
+  mst: {
+    coverage: [
+      "Lecture7.cpp: Krushkal",
+      "Lecture7.cpp: Mr. President",
+      "Lecture7.cpp: minCostConnectPoints",
+      "Lecture7.cpp: Optimize Water Distribution note",
+      "Lecture8.cpp: Prim note"
+    ],
+    recipes: [
+      {
+        title: "Kruskal MST",
+        source: "Lecture7.cpp:Krushkal",
+        steps: [
+          "Put every edge as {u, v, weight}.",
+          "Sort edges by weight.",
+          "Create DSU.",
+          "Process edges from smallest to largest.",
+          "If unite(u,v) succeeds, take the edge into MST.",
+          "If unite fails, skip it because it creates a cycle."
+        ],
+        remember:
+          "Kruskal is sorting plus DSU."
+      },
+      {
+        title: "Min cost to connect points",
+        source: "Lecture7.cpp:minCostConnectPoints",
+        steps: [
+          "Build all possible edges between point pairs.",
+          "Weight is Manhattan distance.",
+          "Sort all edges by weight.",
+          "Run Kruskal.",
+          "Add weights of accepted edges."
+        ],
+        remember:
+          "This is MST on a complete graph built from points."
+      },
+      {
+        title: "Mr. President budget MST",
+        source: "Lecture7.cpp:solve",
+        steps: [
+          "Build MST with Kruskal and store the weights used.",
+          "If MST cannot connect all nodes, answer is -1.",
+          "If cost is already within budget, answer is 0.",
+          "Otherwise replace the largest used roads by super roads of cost 1.",
+          "Count replacements until cost becomes <= budget."
+        ],
+        remember:
+          "First make the cheapest connected network, then reduce the biggest chosen edges."
+      }
+    ]
+  },
+  "shortest-paths": {
+    coverage: [
+      "Lecture8.cpp: Dj",
+      "Lecture9.cpp: networkDelayTime",
+      "Lecture9.cpp: Bellman-Ford for cheapest flights",
+      "Lecture10.cpp: The Maze II",
+      "Lecture11.cpp: two Dijkstra runs for special nodes"
+    ],
+    recipes: [
+      {
+        title: "Dijkstra using set",
+        source: "Lecture8.cpp:Dj",
+        steps: [
+          "Insert {0, source} into a set or priority queue.",
+          "Pick the entry with smallest distance.",
+          "If vertex is already visited, skip it.",
+          "Mark vertex visited.",
+          "For each neighbour, push distance-so-far + edge weight."
+        ],
+        remember:
+          "Dijkstra is for non-negative weights. The smallest pending distance is processed first."
+      },
+      {
+        title: "Network delay time",
+        source: "Lecture9.cpp:networkDelayTime",
+        steps: [
+          "Build a directed weighted graph from times.",
+          "Run Dijkstra from source k.",
+          "Keep dist array for best known distance.",
+          "After Dijkstra, if any vertex is unvisited, return -1.",
+          "Otherwise answer is the maximum distance."
+        ],
+        remember:
+          "All nodes must receive the signal; the slowest final distance is the answer."
+      },
+      {
+        title: "Cheapest flights within K stops",
+        source: "Lecture9.cpp:findCheapestPrice",
+        steps: [
+          "Use Bellman-Ford style relaxation.",
+          "Run k+1 rounds because k stops means k+1 edges.",
+          "Copy old distances into a temporary array each round.",
+          "Relax every flight using only previous-round distances.",
+          "Stop early if no distance changes."
+        ],
+        remember:
+          "Use a temporary array so one round does not accidentally use more than one new edge."
+      },
+      {
+        title: "The Maze II",
+        source: "Lecture10.cpp:shortestDistance",
+        steps: [
+          "The ball does not move one cell; it rolls until a wall.",
+          "Precompute where each cell stops in left, right, up, and down directions.",
+          "Run Dijkstra over stopping cells.",
+          "Distance added is the number of cells rolled.",
+          "Return when destination cell is popped."
+        ],
+        remember:
+          "Maze II is weighted because one move can roll different distances."
+      }
+    ]
+  },
+  "advanced-map": {
+    coverage: [
+      "Lecture11.cpp: KosaRajuAlgo",
+      "Lecture11.cpp: reverse graph",
+      "Lecture11.cpp: Dijkstra from two sources",
+      "Lecture12LastClass.cpp: criticalConnections",
+      "Lecture12LastClass.cpp: disc and low arrays"
+    ],
+    recipes: [
+      {
+        title: "Kosaraju SCC",
+        source: "Lecture11.cpp:KosaRajuAlgo",
+        steps: [
+          "Run DFS on original graph and push nodes after their DFS finishes.",
+          "Reverse every directed edge.",
+          "Process nodes in reverse finish order.",
+          "Each DFS on the reversed graph prints one strongly connected component."
+        ],
+        remember:
+          "First pass gives finish order; second pass on reversed graph gives SCC groups."
+      },
+      {
+        title: "Critical connections / bridges",
+        source: "Lecture12LastClass.cpp:criticalConnections",
+        steps: [
+          "Build an undirected graph.",
+          "During DFS, assign disc[u] and low[u].",
+          "For an unvisited child, DFS first, then update low[u] from low[child].",
+          "If disc[u] < low[child], edge u-child is a bridge.",
+          "For an already visited non-parent child, update low[u] from disc[child]."
+        ],
+        remember:
+          "low[child] tells whether the child subtree can reach an ancestor without using the parent edge."
+      },
+      {
+        title: "Two-source Dijkstra pattern",
+        source: "Lecture11.cpp:solve",
+        steps: [
+          "Run Dijkstra once from friend's location.",
+          "Run Dijkstra once from your location.",
+          "Loop over all special nodes.",
+          "Keep only special nodes reachable by both sources and within the required limit.",
+          "Minimize DistFriend[special] + DistYou[special]."
+        ],
+        remember:
+          "When a problem asks to meet at a special node, precompute distance from each important source."
+      }
+    ]
+  }
+};
+
 const practiceProblems = {
   lc200: {
     name: "LeetCode 200 - Number of Islands",
@@ -547,6 +1243,16 @@ const practiceProblems = {
     name: "LeetCode 815 - Bus Routes",
     idea: "BFS over routes and stops with visited route tracking.",
     level: "hard"
+  },
+  lc785: {
+    name: "LeetCode 785 - Is Graph Bipartite?",
+    idea: "Use BFS coloring; a color conflict means an odd cycle.",
+    level: "medium"
+  },
+  lc886: {
+    name: "LeetCode 886 - Possible Bipartition",
+    idea: "Build an undirected dislike graph and run bipartite BFS.",
+    level: "medium"
   },
   lc207: {
     name: "LeetCode 207 - Course Schedule",
@@ -817,6 +1523,28 @@ const practiceGuides = {
     ],
     stuck: "The important visited array is often visited buses, not just visited stops.",
     code: "for bus in stopToBuses[stop]: push every stop on that bus"
+  },
+  lc785: {
+    pattern: "BFS coloring",
+    steps: [
+      "Start from every unvisited component.",
+      "Give the start vertex color 1.",
+      "BFS level by level and give neighbours the opposite color.",
+      "If a visited vertex appears with a different expected color, return false."
+    ],
+    stuck: "Think in two sets. Every edge must go from set A to set B, never inside the same set.",
+    code: "if color[v] already exists and color[v] != expected: return false"
+  },
+  lc886: {
+    pattern: "Build graph, then bipartite BFS",
+    steps: [
+      "Convert dislikes into an undirected graph.",
+      "Run BFS coloring from every unvisited person.",
+      "People at the same BFS level get the same color.",
+      "If any dislike edge connects same color, bipartition is impossible."
+    ],
+    stuck: "The dislikes list is the edge list. The two groups are just bipartite colors.",
+    code: "graph[a].push(b); graph[b].push(a); then color BFS"
   },
   lc207: {
     pattern: "Topological cycle check",
@@ -1199,6 +1927,8 @@ function renderLesson() {
       <p class="lesson-summary">${escapeHtml(lesson.summary)}</p>
     </div>
 
+    ${renderSourceGuide(lesson)}
+
     <div class="concept-block">
       <h4>Mental model</h4>
       <p>${escapeHtml(lesson.mentalModel)}</p>
@@ -1241,6 +1971,46 @@ function renderLesson() {
     renderLessonNav();
     renderLesson();
   });
+}
+
+function renderSourceGuide(lesson) {
+  const guide = lessonSourceGuides[lesson.id];
+  if (!guide) return "";
+
+  return `
+    <section class="source-guide">
+      <div class="source-guide-head">
+        <h4>From RajneeshSirGraph</h4>
+        <p>Read these as exact beginner recipes before writing code.</p>
+      </div>
+
+      <div class="coverage-box">
+        <strong>Covered source functions/problems</strong>
+        <div class="coverage-list">
+          ${guide.coverage.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+        </div>
+      </div>
+
+      <div class="recipe-list">
+        ${guide.recipes
+          .map(
+            (recipe) => `
+              <article class="recipe-card">
+                <header>
+                  <span>${escapeHtml(recipe.source)}</span>
+                  <h5>${escapeHtml(recipe.title)}</h5>
+                </header>
+                <ol class="recipe-steps">
+                  ${recipe.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                </ol>
+                <p class="recipe-remember"><strong>Remember:</strong> ${escapeHtml(recipe.remember)}</p>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
 }
 
 function renderAlgorithmTabs() {

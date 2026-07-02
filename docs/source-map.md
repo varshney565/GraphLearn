@@ -8,12 +8,12 @@ This project uses the public `RajneeshSirGraph` folder as the source syllabus:
 
 | GraphLearn lesson | Original source | Main ideas |
 | --- | --- | --- |
-| What A Graph Is | `Lecture1.cpp` | weighted adjacency list, add edge, display graph |
-| Build, Display, Remove | `Lecture1.cpp` | remove edge, remove vertex, graph debugging output |
-| DFS And Backtracking | `Lecture1.cpp` | has path, all paths, preorder, heaviest path, Hamiltonian paths |
-| Grids Are Graphs Too | `Lecture2.cpp`, `Lecture3.cpp`, `Lecture6.cpp` | islands, max area, perimeter, surrounded regions, distinct islands, sub-islands |
-| BFS, Levels, And Minutes | `Lecture3.cpp` | BFS with and without cycle checks, bipartite graph, rotting oranges, shortest binary matrix, 01 matrix |
-| Directed Graphs And Order | `Lecture4.cpp`, `Lecture5.cpp` | directed cycle detection, topological sort, Kahn's algorithm, course schedule |
+| Graph Representation | `Lecture1.cpp` | weighted adjacency list, add edge, display, remove edge, remove vertex |
+| DFS On Graph | `Lecture1.cpp`, `Lecture2.cpp` | mark visited, visit unvisited neighbours, connected components, all paths, preorder, heaviest path, Hamiltonian paths |
+| DFS On Grid | `Lecture2.cpp`, `Lecture3.cpp`, `Lecture6.cpp` | islands, max area, perimeter, surrounded regions, distinct islands, sub-islands |
+| BFS And Levels | `Lecture3.cpp`, `Lecture8.cpp` | BFS with and without cycle checks, rotting oranges, shortest binary matrix, 01 matrix, bus routes |
+| Cycle Detection | `Lecture3.cpp`, `Lecture4.cpp`, `Lecture5.cpp`, `Lecture8.cpp` | BFS repeated pop, bipartite coloring, directed DFS states, DSU union failure, Kahn processed count |
+| Topological Sort | `Lecture4.cpp` | DFS topological sort, Kahn's algorithm, course schedule, course order |
 | Disjoint Set Union | `Lecture4.cpp`, `Lecture5.cpp`, `Lecture6.cpp`, `Lecture8.cpp` | union-find, components, redundant connection, smallest equivalent string, dynamic islands, regions by slashes |
 | Minimum Spanning Tree | `Lecture7.cpp`, `Lecture8.cpp` | Kruskal, Prim intuition, water distribution, connect points, budgeted MST |
 | Weighted Shortest Paths | `Lecture8.cpp`, `Lecture9.cpp`, `Lecture10.cpp`, `Lecture11.cpp`, `Lecture12LastClass.cpp` | Dijkstra, Bellman-Ford relaxation, network delay, cheapest flights, maze variants, minimum effort path |
@@ -27,6 +27,9 @@ beginner course with:
 
 - plain-language mental models before code,
 - small C++ code shapes rather than full lecture files,
+- source-faithful step recipes for RajneeshSirGraph functions such as
+  `hasPathHelper`, `TotalPaths`, `BFS_without_cycle`, `KahnsAlgo`, DSU,
+  Kruskal, Dijkstra, Kosaraju, and bridges,
 - a visual stepper for DFS, BFS, Dijkstra, Kahn, and Kruskal,
 - lesson-specific quizzes,
 - practice problem cards grouped by topic,
