@@ -462,6 +462,149 @@ if (low[v] > disc[u]) {
   }
 ];
 
+const lessonDeepDives = {
+  "graph-basics": {
+    walkthrough: [
+      "Read any graph question by first translating nouns into vertices and relationships into edges. In Number of Islands, cells are vertices and neighboring land cells are edges. In Course Schedule, courses are vertices and prerequisites are directed edges.",
+      "After that, decide the graph type: undirected or directed, weighted or unweighted, connected or possibly disconnected. This one decision usually tells you whether DFS, BFS, DSU, topological sort, MST, or shortest path is the correct family.",
+      "The adjacency list is the most common competitive-programming representation because it lets each vertex store only the neighbors it actually has."
+    ],
+    dryRun:
+      "For edge 0-1 with weight 10 in an undirected graph, graph[0] stores (1,10) and graph[1] stores (0,10). If it is directed 0->1, only graph[0] stores 1.",
+    mistakes: [
+      "Storing an undirected edge only once.",
+      "Using a matrix when the graph is sparse and an adjacency list is simpler.",
+      "Forgetting that disconnected graphs need a loop over every vertex, not only one DFS from 0."
+    ]
+  },
+  "adjacency-operations": {
+    walkthrough: [
+      "Displaying the graph is not just for output. It is the fastest way to debug whether edges were inserted in the right direction and whether weights are attached to the correct neighbor.",
+      "Remove edge means delete the neighbor entry from both sides in an undirected graph. Remove vertex means repeatedly remove every edge touching that vertex.",
+      "When the graph stores pairs, do not compare the full pair unless the weight matters. Usually removal finds by neighbor vertex."
+    ],
+    dryRun:
+      "If vertex 2 has neighbors (1,10), (3,40), (7,2), removing edge 2-7 means erase 7 from graph[2] and erase 2 from graph[7].",
+    mistakes: [
+      "Deleting from one side only.",
+      "Skipping bounds checks while manually searching neighbor lists.",
+      "Assuming display order is sorted when insertion order controls it."
+    ]
+  },
+  "dfs-backtracking": {
+    walkthrough: [
+      "DFS answers reachability by going deep. Mark the current node before exploring neighbors so a cycle cannot trap recursion forever.",
+      "For one answer, return immediately when the destination is found. For all answers, keep exploring every unvisited neighbor and collect the path at the base case.",
+      "Backtracking is the part that restores state. If a vertex was marked only for the current path, unmark it before returning so another path can reuse it."
+    ],
+    dryRun:
+      "From 0, DFS may try 1, then 2, then 7, then 8. When 8 has no new neighbor, the call returns and DFS tries the next pending neighbor from the previous node.",
+    mistakes: [
+      "Not marking visited before recursive calls.",
+      "Unmarking visited in a normal connected-component DFS where nodes should stay done.",
+      "Using DFS for shortest path in an unweighted graph when BFS is the safer tool."
+    ]
+  },
+  "grid-graphs": {
+    walkthrough: [
+      "A grid graph usually avoids building an adjacency list. The neighbors are computed by direction arrays at runtime.",
+      "DFS/BFS starts from a valid cell, marks it visited, and expands to valid neighboring cells. The marking can be a separate visited matrix or an in-place grid change.",
+      "Boundary-based questions often flip the thinking: first mark everything connected to the boundary, then process what remains."
+    ],
+    dryRun:
+      "For a land cell (2,3), four-direction neighbors are (3,3), (1,3), (2,4), and (2,2). Only inside-grid land cells continue the DFS.",
+    mistakes: [
+      "Mixing up row and column bounds.",
+      "Using four directions when the problem allows eight directions, or the reverse.",
+      "Counting an island before marking it, which can double-count cells."
+    ]
+  },
+  "bfs-levels": {
+    walkthrough: [
+      "BFS is the natural choice when each move costs exactly one. The queue processes all nodes at distance d before any node at distance d+1.",
+      "If the answer is minutes, moves, semesters, or buses, think in levels. Store the queue size at the start of each level and process exactly that many entries.",
+      "For multi-source BFS, push every starting source first. This makes all sources distance 0 and lets the wave expand from all of them together."
+    ],
+    dryRun:
+      "If queue starts with all rotten oranges, level 1 rots every fresh orange adjacent to any rotten one. Level 2 rots the next ring.",
+    mistakes: [
+      "Marking visited only when popped, which can push the same cell many times.",
+      "Incrementing level after every node instead of after every queue layer.",
+      "Using BFS on weighted edges where one edge can cost more than another."
+    ]
+  },
+  "directed-order": {
+    walkthrough: [
+      "A directed graph can encode dependency: u -> v means u must happen before v, or v depends on u depending on how you build it. Be consistent.",
+      "Kahn's algorithm starts with all indegree-0 nodes. Removing a node means its outgoing edges no longer block children, so their indegree decreases.",
+      "If the final order has fewer than n nodes, some nodes were locked inside a cycle and no valid ordering exists."
+    ],
+    dryRun:
+      "If 4 points to 0 and 1, and 4 has indegree 0, process 4 first. That decreases indegree of 0 and 1 by one.",
+    mistakes: [
+      "Building prerequisite edges backward and then interpreting the order incorrectly.",
+      "Forgetting to detect cycles by comparing order size to n.",
+      "Using undirected visited logic on a directed cycle problem."
+    ]
+  },
+  dsu: {
+    walkthrough: [
+      "DSU does not explore the graph like DFS. It maintains groups while edges are added.",
+      "find(x) returns the representative of x's group. union(a,b) merges two groups only if their representatives differ.",
+      "When union fails, a and b were already connected. In an undirected graph edge stream, that is exactly the cycle signal."
+    ],
+    dryRun:
+      "Edges 1-2 and 2-3 merge {1,2,3}. If edge 1-3 arrives later, both endpoints already have the same representative, so the edge is redundant.",
+    mistakes: [
+      "Forgetting path compression, which makes repeated find calls slower.",
+      "Not initializing parent[i] = i.",
+      "Using DSU for directed reachability, where it usually loses direction information."
+    ]
+  },
+  mst: {
+    walkthrough: [
+      "MST problems ask for the cheapest way to connect everything. Cycles are wasteful because one edge in a cycle can be removed while the graph stays connected.",
+      "Kruskal sees all candidate edges, sorts by weight, and accepts an edge only when DSU says it connects two different components.",
+      "Prim starts from a node and repeatedly chooses the cheapest edge leaving the growing connected set."
+    ],
+    dryRun:
+      "If edges of weight 2 connect new components, Kruskal takes them first. A later weight-4 edge is skipped if its endpoints are already connected.",
+    mistakes: [
+      "Stopping before selecting n-1 edges.",
+      "Not handling disconnected graphs.",
+      "Using shortest path logic when the task asks to connect all nodes cheaply."
+    ]
+  },
+  "shortest-paths": {
+    walkthrough: [
+      "Weighted shortest path questions are about distance values, not just visited/unvisited. Relaxation is the central move: can current distance plus edge weight improve the neighbor?",
+      "Dijkstra works when all weights are non-negative. The priority set always picks the current smallest unfinished distance.",
+      "Bellman-Ford style loops are useful when the question limits stops or when negative edges appear. Each round represents one more edge allowed."
+    ],
+    dryRun:
+      "If dist[2] is 20 and edge 2-7 has weight 2, then candidate distance for 7 is 22. If dist[7] was infinity, update it to 22.",
+    mistakes: [
+      "Using normal BFS on non-equal weights.",
+      "Marking a node final too early when using the wrong data structure.",
+      "For maze rolling problems, treating one step as one cell instead of rolling until a wall."
+    ]
+  },
+  "advanced-map": {
+    walkthrough: [
+      "Advanced graph problems are usually combinations of simpler patterns. First classify the hidden ask: component, order, shortest route, cheap connection, or critical edge.",
+      "Kosaraju uses finish order and a reversed graph to group strongly connected components.",
+      "Bridge logic tracks discovery time and low-link values. A child subtree that cannot reach an ancestor makes the parent-child edge critical."
+    ],
+    dryRun:
+      "If DFS reaches child v from u and low[v] stays greater than disc[u], then v's subtree has no back edge to u or above. Edge u-v is a bridge.",
+    mistakes: [
+      "Trying to memorize every hard problem separately.",
+      "Not carrying enough state in BFS or Dijkstra.",
+      "Using an undirected bridge formula directly on directed SCC problems."
+    ]
+  }
+};
+
 const practiceProblems = {
   lc200: {
     name: "LeetCode 200 - Number of Islands",
@@ -627,6 +770,372 @@ const practiceProblems = {
     name: "LeetCode 924 - Minimize Malware Spread",
     idea: "Track component size and infection count with DSU.",
     level: "hard"
+  }
+};
+
+const practiceGuides = {
+  lc200: {
+    pattern: "Grid DFS or BFS component counting",
+    steps: [
+      "Loop over every cell.",
+      "When you find land, count one island and flood-fill all connected land.",
+      "During flood-fill, mark visited by changing land to water or using a visited matrix.",
+      "Return the number of flood-fill starts."
+    ],
+    stuck: "If you are stuck, ask: what is one vertex? It is a land cell. What are its edges? Four-direction land neighbors.",
+    code: "if grid[r][c] == '1': islands++, dfs(r,c)"
+  },
+  lc463: {
+    pattern: "Grid edge contribution",
+    steps: [
+      "Visit every land cell.",
+      "Each land cell starts with 4 sides.",
+      "For every land neighbor, subtract one side.",
+      "Add the remaining sides to the answer."
+    ],
+    stuck: "Do not try to draw the whole island. Count exposed sides cell by cell.",
+    code: "if land: for 4 dirs, if outside or water: perimeter++"
+  },
+  lc684: {
+    pattern: "DSU cycle detection",
+    steps: [
+      "Initialize every node as its own parent.",
+      "Process edges in input order.",
+      "If union succeeds, the edge connected two components.",
+      "If union fails, both endpoints were already connected; return that edge."
+    ],
+    stuck: "The redundant edge is the first edge that tries to connect vertices already in the same component.",
+    code: "for edge in edges: if !unite(u,v) return edge"
+  },
+  lc990: {
+    pattern: "DSU with two passes",
+    steps: [
+      "Union all equations using == first.",
+      "Then scan all != equations.",
+      "If two unequal variables have the same parent, the equations contradict.",
+      "Otherwise all constraints are satisfiable."
+    ],
+    stuck: "Equalities build groups. Inequalities only validate after the groups are fully built.",
+    code: "union equals; then if find(a)==find(b) for a!=b return false"
+  },
+  lc1061: {
+    pattern: "DSU with smallest representative",
+    steps: [
+      "Create 26 DSU nodes for letters.",
+      "Union each pair from s1 and s2.",
+      "When merging two groups, keep the lexicographically smaller root as parent.",
+      "For each baseStr character, append its root character."
+    ],
+    stuck: "The DSU representative is not arbitrary here; it must be the smallest letter in the equivalence class.",
+    code: "parent[max(rootA,rootB)] = min(rootA,rootB)"
+  },
+  lc797: {
+    pattern: "DFS backtracking in a DAG",
+    steps: [
+      "Start path with source 0.",
+      "DFS each outgoing neighbor.",
+      "When node n-1 is reached, copy the current path into answers.",
+      "Pop the node while returning so another path can reuse the prefix."
+    ],
+    stuck: "Because the graph is a DAG, you do not need complicated cycle handling; focus on path push and pop.",
+    code: "path.push(u); if u==target save; for v dfs(v); path.pop()"
+  },
+  lc1129: {
+    pattern: "BFS with state",
+    steps: [
+      "Build separate red and blue adjacency lists.",
+      "Queue state should include node and last edge color.",
+      "From a state, only take edges of the opposite color.",
+      "Track distance per node per last color."
+    ],
+    stuck: "A node alone is not enough state. Reaching node 3 by red is different from reaching node 3 by blue.",
+    code: "queue.push({0, RED}); queue.push({0, BLUE})"
+  },
+  lc1192: {
+    pattern: "Tarjan bridge finding",
+    steps: [
+      "Run DFS with discovery time disc[u] and low[u].",
+      "For a tree edge u-v, DFS into v first.",
+      "After returning, update low[u] with low[v].",
+      "If low[v] > disc[u], edge u-v is a bridge."
+    ],
+    stuck: "low[v] means the oldest ancestor v's subtree can reach without using the parent edge.",
+    code: "if low[child] > disc[u]: bridges.push({u, child})"
+  },
+  lc695: {
+    pattern: "Grid DFS area counting",
+    steps: [
+      "Loop over every cell.",
+      "When land is found, DFS it and return the component size.",
+      "Mark each visited land cell.",
+      "Keep the maximum size across all DFS calls."
+    ],
+    stuck: "This is Number of Islands, but instead of count++, your DFS returns area.",
+    code: "area = 1 + dfs(neighbor land cells)"
+  },
+  lc130: {
+    pattern: "Boundary DFS",
+    steps: [
+      "Only O cells connected to the boundary survive.",
+      "DFS/BFS from boundary O cells and mark them safe.",
+      "Flip every unmarked O to X.",
+      "Turn safe marks back into O."
+    ],
+    stuck: "Do not search for surrounded regions directly. Search for unsurrounded boundary-connected regions.",
+    code: "mark boundary O as safe; flip remaining O"
+  },
+  lc694: {
+    pattern: "Shape signature DFS",
+    steps: [
+      "DFS each island from its first cell.",
+      "Record moves such as U, D, L, R while traversing.",
+      "Record a backtrack marker too, so different shapes do not collide.",
+      "Insert the signature into a set."
+    ],
+    stuck: "Absolute position does not matter. The traversal shape relative to the start matters.",
+    code: "signature += dir; dfs(next); signature += backtrack"
+  },
+  lc1020: {
+    pattern: "Boundary removal",
+    steps: [
+      "Any land connected to the boundary can walk off the grid.",
+      "DFS/BFS all boundary land and mark it water or safe.",
+      "Count the remaining land cells.",
+      "Those remaining cells are enclaves."
+    ],
+    stuck: "Like Surrounded Regions, solve the outside-connected part first.",
+    code: "remove boundary-connected land; count leftover land"
+  },
+  lc1905: {
+    pattern: "DFS with validity flag",
+    steps: [
+      "DFS each island in grid2.",
+      "During DFS, check whether every visited grid2 land cell is also land in grid1.",
+      "Still finish the full DFS even if one cell is invalid.",
+      "Count the island only if the validity flag stays true."
+    ],
+    stuck: "Do not return early on the first invalid cell; you must still mark the whole grid2 island visited.",
+    code: "valid &= grid1[r][c] == 1 while flooding grid2 island"
+  },
+  lc994: {
+    pattern: "Multi-source BFS levels",
+    steps: [
+      "Push all initially rotten oranges into the queue.",
+      "Count fresh oranges.",
+      "Each BFS level represents one minute.",
+      "When a fresh orange rots, decrement fresh count."
+    ],
+    stuck: "All rotten oranges spread at the same time, so start BFS from all of them together.",
+    code: "while queue and fresh>0: minutes++; process one level"
+  },
+  lc1091: {
+    pattern: "Eight-direction BFS",
+    steps: [
+      "Reject immediately if start or end is blocked.",
+      "BFS from (0,0) using eight directions.",
+      "Store distance as level or inside the queue.",
+      "Return distance when the bottom-right cell is reached."
+    ],
+    stuck: "Because every move costs one, the first time BFS reaches the target is optimal.",
+    code: "dirs = 8 moves; BFS level count"
+  },
+  lc542: {
+    pattern: "Multi-source BFS from zeroes",
+    steps: [
+      "Push every 0 cell into the queue with distance 0.",
+      "Treat every 1 as initially unvisited.",
+      "BFS outward from all zeroes.",
+      "The first distance assigned to a 1 is its nearest-zero distance."
+    ],
+    stuck: "Do not run BFS from every 1. Reverse the thinking and run one BFS from all 0 cells.",
+    code: "queue = all zero cells; expand into ones"
+  },
+  lc815: {
+    pattern: "BFS over bus routes",
+    steps: [
+      "Map each stop to all buses/routes that visit it.",
+      "BFS starts from the source stop.",
+      "Taking one unvisited bus adds all stops on that route to the queue.",
+      "Each BFS level is one more bus taken."
+    ],
+    stuck: "The important visited array is often visited buses, not just visited stops.",
+    code: "for bus in stopToBuses[stop]: push every stop on that bus"
+  },
+  lc207: {
+    pattern: "Topological cycle check",
+    steps: [
+      "Build graph and indegree from prerequisites.",
+      "Push indegree-0 courses.",
+      "Remove courses one by one and reduce neighbors' indegree.",
+      "If processed count equals n, all courses can finish."
+    ],
+    stuck: "A cycle means no course inside the cycle ever becomes indegree 0.",
+    code: "return processed == numCourses"
+  },
+  lc210: {
+    pattern: "Topological order",
+    steps: [
+      "Use the same Kahn setup as Course Schedule.",
+      "Append each popped course to answer.",
+      "Reduce indegree of dependent courses.",
+      "Return answer only if it contains all courses."
+    ],
+    stuck: "This problem asks for the order, not just true/false. Store the pop order.",
+    code: "if order.size()!=n return {}; else return order"
+  },
+  lc1136: {
+    pattern: "Kahn BFS levels",
+    steps: [
+      "Build indegree and graph.",
+      "Start with all indegree-0 courses.",
+      "Each queue level is one semester of parallel courses.",
+      "If all courses are processed, return semester count; otherwise -1."
+    ],
+    stuck: "Semester is a level number. Process the queue by size.",
+    code: "semesters++; process all currently available courses"
+  },
+  lc839: {
+    pattern: "DSU on strings",
+    steps: [
+      "Compare each pair of strings.",
+      "Two strings are similar if they differ in 0 or 2 positions.",
+      "Union similar strings.",
+      "The number of DSU components is the answer."
+    ],
+    stuck: "The graph is not explicit. Strings are vertices; similarity creates an edge.",
+    code: "if diffCount(a,b) <= 2: unite(i,j)"
+  },
+  lc305: {
+    pattern: "Dynamic DSU components",
+    steps: [
+      "Start with water everywhere and component count 0.",
+      "When land is added for the first time, count++.",
+      "Union it with neighboring land cells.",
+      "Every successful union reduces count by one."
+    ],
+    stuck: "The count changes only on new land and successful merges.",
+    code: "add land: count++; for land neighbor if unite count--"
+  },
+  lc959: {
+    pattern: "DSU geometry modeling",
+    steps: [
+      "Model grid corner points as DSU nodes.",
+      "Union all boundary points with the outside.",
+      "For each slash, union the two corner points it connects.",
+      "If union fails, a new region is formed."
+    ],
+    stuck: "A slash closes a loop when its endpoints are already connected.",
+    code: "if slash edge union fails: regions++"
+  },
+  lc1168: {
+    pattern: "MST with virtual node",
+    steps: [
+      "Create a virtual node 0 representing building a well.",
+      "Connect 0 to every house with edge weight wells[i].",
+      "Add all pipe edges normally.",
+      "Run Kruskal MST over this combined edge list."
+    ],
+    stuck: "Choosing a well is just another edge choice when you add the virtual source.",
+    code: "edges.push({0, house, wellCost}); run MST"
+  },
+  lc1584: {
+    pattern: "Complete graph MST",
+    steps: [
+      "Treat each point as a vertex.",
+      "Build every pair edge with Manhattan distance.",
+      "Sort edges by weight.",
+      "Use Kruskal until n-1 edges are selected."
+    ],
+    stuck: "The problem is not asking for a path. It asks for the cheapest network connecting all points.",
+    code: "for i<j: edges.push({i,j,manhattan}); kruskal"
+  },
+  "mr-president": {
+    pattern: "MST plus budget reduction",
+    steps: [
+      "Build an MST first; if graph is disconnected, answer is -1.",
+      "Store selected MST edge weights.",
+      "If total cost is above budget, replace largest selected roads with cost 1.",
+      "Count replacements until cost fits or no edge remains."
+    ],
+    stuck: "You must start from an MST; replacing roads before minimizing can waste upgrades.",
+    code: "sort selected weights descending; while cost>k cost -= w-1"
+  },
+  lc743: {
+    pattern: "Dijkstra from source",
+    steps: [
+      "Build directed weighted adjacency list.",
+      "Run Dijkstra from k.",
+      "If any node remains unreachable, return -1.",
+      "Otherwise return the maximum shortest distance."
+    ],
+    stuck: "Network delay is the time for the slowest reachable node to receive the signal.",
+    code: "answer = max(dist[1..n]) after dijkstra"
+  },
+  lc787: {
+    pattern: "Layered Bellman-Ford",
+    steps: [
+      "dist[src] starts at 0.",
+      "Run k+1 relaxation rounds because k stops means at most k+1 flights.",
+      "Use a copy array each round so one round uses one more edge only.",
+      "Return dist[dst] or -1."
+    ],
+    stuck: "A plain Dijkstra can ignore the stop limit. The number of edges used is part of the state.",
+    code: "for round in 1..k+1: relax all flights into copy"
+  },
+  lc505: {
+    pattern: "Dijkstra on rolling maze",
+    steps: [
+      "From each cell, roll in a direction until hitting a wall.",
+      "The rolled distance is the edge weight.",
+      "Use Dijkstra because different rolls have different lengths.",
+      "Return distance when destination is finalized."
+    ],
+    stuck: "The neighbor is not the adjacent cell. It is the stopping cell after rolling.",
+    code: "roll until wall; relax stopping cell with traveled steps"
+  },
+  lc499: {
+    pattern: "Dijkstra with lexicographic tie",
+    steps: [
+      "Use the same rolling-neighbor logic as Maze II.",
+      "Track both distance and path string.",
+      "Prefer smaller distance; if tied, prefer lexicographically smaller path.",
+      "Stop when the hole is reached by the best state."
+    ],
+    stuck: "Distance is primary. Lexicographic order only decides ties.",
+    code: "if newDist<dist or tie and newPath<path: update"
+  },
+  lc1631: {
+    pattern: "Dijkstra with max-edge path cost",
+    steps: [
+      "Moving between cells has effort abs(height difference).",
+      "Path cost is the maximum effort used so far.",
+      "Dijkstra state distance is min possible maximum effort to each cell.",
+      "Relax neighbor with max(currentEffort, edgeEffort)."
+    ],
+    stuck: "You are minimizing the worst jump, not the sum of jumps.",
+    code: "next = max(cost, abs(h1-h2)); relax if next is smaller"
+  },
+  "mother-vertex": {
+    pattern: "DFS finish candidate plus verification",
+    steps: [
+      "Run DFS over all vertices.",
+      "The last start vertex that begins a DFS is the only possible mother vertex.",
+      "Run one more DFS from that candidate.",
+      "If it reaches all vertices, return it; otherwise no mother vertex exists."
+    ],
+    stuck: "The first pass only finds a candidate. The second pass proves it.",
+    code: "candidate = last DFS root; verify reachability(candidate)"
+  },
+  malware: {
+    pattern: "DSU with component infection counts",
+    steps: [
+      "Union connected clean/infected nodes into components.",
+      "For each component, track size and how many initial infected nodes it has.",
+      "Removing an infected node helps only if its component has exactly one infection.",
+      "Choose the infected node that saves the largest component; tie by smaller index."
+    ],
+    stuck: "If a component has two infected nodes, removing one still leaves the component infected.",
+    code: "if infectedCount[root] == 1: saved = size[root]"
   }
 };
 
@@ -845,6 +1354,8 @@ function renderLesson() {
       </ul>
     </div>
 
+    ${renderLessonDeepDive(lesson)}
+
     <div class="code-card">
       <header>
         <span>${escapeHtml(lesson.codeLabel)}</span>
@@ -877,6 +1388,40 @@ function renderLesson() {
   });
 }
 
+function renderLessonDeepDive(lesson) {
+  const dive = lessonDeepDives[lesson.id];
+  if (!dive) return "";
+  return `
+    <div class="concept-block">
+      <h4>Detailed walkthrough</h4>
+      <div class="deep-dive-grid">
+        ${dive.walkthrough
+          .map(
+            (item, index) => `
+              <article class="walkthrough-card">
+                <span>${index + 1}</span>
+                <p>${escapeHtml(item)}</p>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    </div>
+
+    <div class="concept-block">
+      <h4>Tiny dry run</h4>
+      <p>${escapeHtml(dive.dryRun)}</p>
+    </div>
+
+    <div class="concept-block">
+      <h4>Common mistakes</h4>
+      <ul class="check-list">
+        ${dive.mistakes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+      </ul>
+    </div>
+  `;
+}
+
 function renderAlgorithmTabs() {
   els.algorithmTabs.innerHTML = Object.entries(algorithms)
     .map(
@@ -895,14 +1440,17 @@ function renderAlgorithmTabs() {
 
 function renderPractice() {
   const lesson = lessons[state.lessonIndex];
-  const cards = lesson.practice.map((id) => practiceProblems[id]).filter(Boolean);
+  const cards = lesson.practice
+    .map((id) => ({ id, problem: practiceProblems[id], guide: practiceGuides[id] }))
+    .filter((item) => item.problem);
   els.practiceList.innerHTML = cards.length
     ? cards
         .map(
-          (problem) => `
+          ({ id, problem, guide }) => `
             <article class="practice-card">
               <strong>${escapeHtml(problem.name)}</strong>
               <p>${escapeHtml(problem.idea)}</p>
+              ${renderProblemGuide(id, guide)}
               <div class="tag-row">
                 <span class="tag ${problem.level}">${escapeHtml(problem.level)}</span>
               </div>
@@ -911,6 +1459,42 @@ function renderPractice() {
         )
         .join("")
     : '<p class="empty-note">Practice problems will appear here for each lesson.</p>';
+}
+
+function renderProblemGuide(id, guide) {
+  const fallback = {
+    pattern: "Graph pattern",
+    steps: [
+      "Identify vertices and edges.",
+      "Choose traversal, DSU, ordering, MST, or shortest path based on the question.",
+      "Dry run on a small example before coding."
+    ],
+    stuck: "When stuck, reduce the problem to graph type plus answer type.",
+    code: "classify graph -> choose pattern -> implement carefully"
+  };
+  const data = guide || fallback;
+  return `
+    <details class="solution-guide">
+      <summary>Stuck? Show solution path</summary>
+      <div class="guide-body">
+        <div>
+          <span class="guide-label">Pattern</span>
+          <p>${escapeHtml(data.pattern)}</p>
+        </div>
+        <div>
+          <span class="guide-label">Steps</span>
+          <ol class="guide-steps">
+            ${data.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+          </ol>
+        </div>
+        <div>
+          <span class="guide-label">When stuck</span>
+          <p>${escapeHtml(data.stuck)}</p>
+        </div>
+        <pre class="guide-code"><code>${escapeHtml(data.code)}</code></pre>
+      </div>
+    </details>
+  `;
 }
 
 function renderQuiz() {

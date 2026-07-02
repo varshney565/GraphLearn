@@ -29,4 +29,6 @@ beginner course with:
 - small C++ code shapes rather than full lecture files,
 - a visual stepper for DFS, BFS, Dijkstra, Kahn, and Kruskal,
 - lesson-specific quizzes,
-- practice problem cards grouped by topic.
+- practice problem cards grouped by topic,
+- expandable solution-path guidance for each practice problem,
+- dry runs and common-mistake sections for each lesson.
